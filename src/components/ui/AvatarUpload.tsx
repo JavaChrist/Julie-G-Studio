@@ -202,7 +202,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ size = 'md', className }) =
         {user?.photoURL && (
           <Button
             size="sm"
-            variant="destructive"
+            variant="danger"
             className="rounded-full p-2 shadow-lg"
             onClick={handleRemoveAvatar}
             disabled={uploading || !isFirebaseConfigured}

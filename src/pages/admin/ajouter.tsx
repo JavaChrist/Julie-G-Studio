@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { ArrowLeft, Plus, Shield } from 'lucide-react';
 import AlbumForm from '../../components/ui/AlbumForm';
@@ -24,7 +24,7 @@ const AjouterAlbum: React.FC = () => {
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const checkAuthAndRedirect = async () => {
+  const checkAuthAndRedirect = useCallback(async () => {
     setIsLoading(true);
 
     try {
@@ -42,11 +42,11 @@ const AjouterAlbum: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [router]);
 
   useEffect(() => {
     checkAuthAndRedirect();
-  }, []);
+  }, [checkAuthAndRedirect]);
 
   const handleBackClick = () => {
     router.push('/admin');

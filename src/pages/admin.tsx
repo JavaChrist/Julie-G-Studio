@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { Plus, BarChart3, Clock, AlertTriangle, Shield, Loader, ArrowLeft, LogOut } from 'lucide-react';
 import { getAllAlbums, extendAlbum, deleteAlbum, disableAlbum, getAdminStats, isUserAdmin } from '../services/adminService';
@@ -21,7 +21,17 @@ const AdminDashboard: React.FC = () => {
   });
   const [refreshing, setRefreshing] = useState(false);
 
-  const checkAuthAndLoadData = async () => {
+  const loadDashboardData = useCallback(async () => {
+    try {
+      const dashboardStats = await getAdminStats();
+      setStats(dashboardStats);
+      setAlbums(dashboardStats.albums);
+    } catch (error) {
+      console.error('Erreur lors du chargement des données:', error);
+    }
+  }, []);
+
+  const checkAuthAndLoadData = useCallback(async () => {
     setIsLoading(true);
 
     try {
@@ -43,21 +53,11 @@ const AdminDashboard: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [router, loadDashboardData]);
 
   useEffect(() => {
     checkAuthAndLoadData();
-  }, []);
-
-  const loadDashboardData = async () => {
-    try {
-      const dashboardStats = await getAdminStats();
-      setStats(dashboardStats);
-      setAlbums(dashboardStats.albums);
-    } catch (error) {
-      console.error('Erreur lors du chargement des données:', error);
-    }
-  };
+  }, [checkAuthAndLoadData]);
 
   const handleExtendAlbum = async (albumId: string) => {
     try {
