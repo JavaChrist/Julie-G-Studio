@@ -145,7 +145,7 @@ const Login: React.FC = () => {
 
           <div className="mt-6">
             <Link to="/register">
-              <Button variant="outline" className="w-full">
+              <Button variant="ghost" className="w-full">
                 Créer un compte
               </Button>
             </Link>

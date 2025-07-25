@@ -34,7 +34,7 @@ const SocialLoginButtons: React.FC<SocialLoginButtonsProps> = ({ className, disa
       {/* Google Login Button */}
       <Button
         type="button"
-        variant="outline"
+        variant="ghost"
         className="w-full relative"
         onClick={handleGoogleLogin}
         disabled={isDisabled}
@@ -68,7 +68,7 @@ const SocialLoginButtons: React.FC<SocialLoginButtonsProps> = ({ className, disa
       {/* GitHub Login Button */}
       <Button
         type="button"
-        variant="outline"
+        variant="ghost"
         className="w-full relative bg-gray-900 text-white hover:bg-gray-800 border-gray-900 hover:border-gray-800 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200"
         onClick={handleGitHubLogin}
         disabled={isDisabled}

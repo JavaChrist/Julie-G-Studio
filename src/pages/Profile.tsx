@@ -52,7 +52,7 @@ const Profile: React.FC = () => {
               </div>
             </div>
             <Button
-              variant="outline"
+              variant="ghost"
               onClick={() => setIsEditing(!isEditing)}
             >
               <Edit className="w-4 h-4 mr-2" />
@@ -127,7 +127,7 @@ const Profile: React.FC = () => {
                   <Save className="w-4 h-4 mr-2" />
                   Sauvegarder
                 </Button>
-                <Button variant="outline" onClick={handleCancel}>
+                <Button variant="ghost" onClick={handleCancel}>
                   <X className="w-4 h-4 mr-2" />
                   Annuler
                 </Button>
@@ -147,7 +147,7 @@ const Profile: React.FC = () => {
                 <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Notifications email</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Recevoir des notifications par email</p>
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="ghost" size="sm">
                 Gérer
               </Button>
             </div>
@@ -157,7 +157,7 @@ const Profile: React.FC = () => {
                 <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Sécurité</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Changer votre mot de passe</p>
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="ghost" size="sm">
                 Modifier
               </Button>
             </div>
@@ -167,7 +167,7 @@ const Profile: React.FC = () => {
                 <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Données personnelles</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Télécharger ou supprimer vos données</p>
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="ghost" size="sm">
                 Gérer
               </Button>
             </div>

@@ -170,7 +170,7 @@ const Register: React.FC = () => {
 
           <div className="mt-6">
             <Link to="/login">
-              <Button variant="outline" className="w-full">
+              <Button variant="ghost" className="w-full">
                 Se connecter
               </Button>
             </Link>
