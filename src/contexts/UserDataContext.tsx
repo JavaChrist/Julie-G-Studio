@@ -177,7 +177,7 @@ export const UserDataProvider: React.FC<UserDataProviderProps> = ({ children }) 
     };
 
     loadUserData();
-  }, [user, isFirebaseConfigured]);
+  }, [user]); // isFirebaseConfigured est une variable constante, pas besoin de la surveiller
 
   const updateProfile = async (data: Partial<UserProfile>) => {
     if (!user || !isFirebaseConfigured || !db) {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, Trash2, RefreshCw, Image, AlertTriangle, Power } from 'lucide-react';
+import { Calendar, Clock, Trash2, RefreshCw, Image as ImageIcon, AlertTriangle, Power } from 'lucide-react';
 import { Album } from '../../types';
 
 interface AdminAlbumCardProps {
@@ -137,7 +137,7 @@ const AdminAlbumCard: React.FC<AdminAlbumCardProps> = ({ album, onExtend, onDele
           )}
 
           <div className="flex items-center text-gray-300">
-            <Image className="w-4 h-4 mr-2" />
+            <ImageIcon className="w-4 h-4 mr-2" />
             <span className="text-sm">
               {album.photos.length} photo{album.photos.length > 1 ? 's' : ''}
             </span>
@@ -300,13 +300,13 @@ const AdminAlbumCard: React.FC<AdminAlbumCardProps> = ({ album, onExtend, onDele
                 </div>
 
                 <p className="text-gray-300 mb-2">
-                  {album.active 
+                  {album.active
                     ? 'Êtes-vous sûr de vouloir désactiver cet album ?'
                     : 'Êtes-vous sûr de vouloir réactiver cet album ?'
                   }
                 </p>
                 <p className="text-sm text-gray-400 mb-6">
-                  <strong>{album.title}</strong> - {album.active 
+                  <strong>{album.title}</strong> - {album.active
                     ? 'L\'album ne sera plus accessible aux clients mais les données seront conservées.'
                     : 'L\'album redeviendra accessible aux clients (si non expiré).'
                   }

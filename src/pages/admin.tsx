@@ -21,10 +21,6 @@ const AdminDashboard: React.FC = () => {
   });
   const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    checkAuthAndLoadData();
-  }, []);
-
   const checkAuthAndLoadData = async () => {
     setIsLoading(true);
 
@@ -48,6 +44,10 @@ const AdminDashboard: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    checkAuthAndLoadData();
+  }, []);
 
   const loadDashboardData = async () => {
     try {

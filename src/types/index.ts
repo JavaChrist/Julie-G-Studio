@@ -26,6 +26,7 @@ export interface ButtonProps extends ComponentProps {
   disabled?: boolean;
   type?: 'button' | 'submit' | 'reset';
   onClick?: () => void;
+  title?: string; // Ajout de la prop title pour les tooltips
 }
 
 export interface InputProps {
@@ -38,7 +39,7 @@ export interface InputProps {
   disabled?: boolean;
   error?: string;
   className?: string;
-} 
+}
 
 // Interface principale pour les albums
 export interface Album {

@@ -24,10 +24,6 @@ const AjouterAlbum: React.FC = () => {
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    checkAuthAndRedirect();
-  }, []);
-
   const checkAuthAndRedirect = async () => {
     setIsLoading(true);
 
@@ -47,6 +43,10 @@ const AjouterAlbum: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    checkAuthAndRedirect();
+  }, []);
 
   const handleBackClick = () => {
     router.push('/admin');
