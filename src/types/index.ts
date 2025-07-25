@@ -27,6 +27,7 @@ export interface ButtonProps extends ComponentProps {
   type?: 'button' | 'submit' | 'reset';
   onClick?: () => void;
   title?: string; // Ajout de la prop title pour les tooltips
+  isLoading?: boolean; // Ajout de la prop isLoading pour les états de chargement
 }
 
 export interface InputProps {
@@ -39,6 +40,9 @@ export interface InputProps {
   disabled?: boolean;
   error?: string;
   className?: string;
+  autoComplete?: string;
+  name?: string;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
 
 // Interface principale pour les albums

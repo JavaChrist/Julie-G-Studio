@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import Layout from '../components/layout/Layout';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
@@ -187,7 +187,7 @@ const Profile: React.FC = () => {
                   Supprimer définitivement votre compte et toutes vos données
                 </p>
               </div>
-              <Button variant="destructive" size="sm">
+              <Button variant="danger" size="sm">
                 Supprimer
               </Button>
             </div>

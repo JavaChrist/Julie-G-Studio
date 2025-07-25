@@ -65,7 +65,7 @@ const Portfolios: React.FC = () => {
             Chaque univers raconte une histoire unique
           </p>
           <button
-            onClick={() => window.history.back()}
+                            onClick={() => typeof window !== 'undefined' && window.history.back()}
             className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-transparent dark:border dark:border-white/20 dark:hover:bg-white/10 text-white rounded-lg transition-colors duration-300 font-medium"
           >
             <svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

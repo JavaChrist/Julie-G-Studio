@@ -10,6 +10,7 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   className = '',
   title,
+  isLoading = false,
 }) => {
   const baseClasses = 'font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
 
@@ -26,7 +27,8 @@ const Button: React.FC<ButtonProps> = ({
     lg: 'px-6 py-3 text-lg',
   };
 
-  const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed' : '';
+  const isDisabled = disabled || isLoading;
+  const disabledClasses = isDisabled ? 'opacity-50 cursor-not-allowed' : '';
 
   const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabledClasses} ${className}`;
 
@@ -34,11 +36,18 @@ const Button: React.FC<ButtonProps> = ({
     <button
       type={type}
       onClick={onClick}
-      disabled={disabled}
+      disabled={isDisabled}
       className={classes}
       title={title}
     >
-      {children}
+      {isLoading ? (
+        <div className="flex items-center justify-center">
+          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+          {children}
+        </div>
+      ) : (
+        children
+      )}
     </button>
   );
 };

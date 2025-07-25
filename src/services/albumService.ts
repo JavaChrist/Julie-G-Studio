@@ -2,6 +2,9 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 import { Album } from "../types";
 
+// Réexporter le type Album pour les autres modules
+export type { Album };
+
 /**
  * Récupère un album par son code d'accès
  * @param code - Code d'accès unique de l'album
@@ -58,7 +61,7 @@ export const isAlbumValid = async (code: string): Promise<boolean> => {
     }
 
     const album = await getAlbumByCode(code);
-    
+
     if (!album) {
       console.log(`Album "${code}" n'existe pas`);
       return false;
@@ -71,7 +74,7 @@ export const isAlbumValid = async (code: string): Promise<boolean> => {
 
     const now = new Date();
     const expireDate = new Date(album.expireAt);
-    
+
     if (expireDate <= now) {
       console.log(`Album "${code}" a expiré le ${album.expireAt}`);
       return false;
@@ -79,7 +82,7 @@ export const isAlbumValid = async (code: string): Promise<boolean> => {
 
     console.log(`Album "${code}" est valide jusqu'au ${album.expireAt}`);
     return true;
-    
+
   } catch (error) {
     console.error('Erreur lors de la validation de l\'album:', error);
     return false;

@@ -11,6 +11,9 @@ const Input: React.FC<InputProps> = ({
   disabled = false,
   error,
   className = '',
+  autoComplete,
+  name,
+  onBlur,
 }) => {
   const inputId = label ? label.toLowerCase().replace(/\s+/g, '-') : undefined;
 
@@ -33,6 +36,9 @@ const Input: React.FC<InputProps> = ({
         onChange={onChange}
         required={required}
         disabled={disabled}
+        autoComplete={autoComplete}
+        name={name}
+        onBlur={onBlur}
         className={`
           w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
           bg-white dark:bg-gray-800 text-gray-900 dark:text-white

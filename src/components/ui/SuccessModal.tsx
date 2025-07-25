@@ -37,7 +37,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
     }
   };
 
-  const clientUrl = `${window.location.origin}/acces`;
+  const clientUrl = typeof window !== 'undefined' ? `${window.location.origin}/acces` : '/acces';
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -93,8 +93,8 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
                   <button
                     onClick={handleCopyCode}
                     className={`px-4 py-2 rounded-lg font-medium transition-colors duration-300 flex items-center space-x-2 ${copied
-                        ? 'bg-green-600 text-white'
-                        : 'bg-blue-500 hover:bg-blue-600 text-white'
+                      ? 'bg-green-600 text-white'
+                      : 'bg-blue-500 hover:bg-blue-600 text-white'
                       }`}
                   >
                     {copied ? (
@@ -127,7 +127,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
               {/* Actions */}
               <div className="flex flex-col sm:flex-row gap-3 w-full">
                 <button
-                  onClick={() => window.open(`/album/${albumCode}`, '_blank')}
+                  onClick={() => typeof window !== 'undefined' && window.open(`/album/${albumCode}`, '_blank')}
                   className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors duration-300"
                 >
                   Prévisualiser l'album

@@ -81,7 +81,9 @@ const ErrorModal: React.FC<ErrorModalProps> = ({ isOpen, onClose, message }) => 
                 <button
                   onClick={() => {
                     onClose();
-                    window.location.href = '/contact';
+                    if (typeof window !== 'undefined') {
+                      window.location.href = '/contact';
+                    }
                   }}
                   className="w-full bg-gray-700 hover:bg-gray-600 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300"
                 >
