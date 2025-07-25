@@ -51,7 +51,7 @@ VITE_FIREBASE_APP_ID=your_app_id`}
               </Button>
             </a>
             <Button
-              variant="outline"
+              variant="ghost"
               onClick={() => window.location.reload()}
             >
               Recharger la page
