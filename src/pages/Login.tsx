@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import SocialLoginButtons from '../components/ui/SocialLoginButtons';
@@ -18,11 +19,8 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const from = (location.state as any)?.from?.pathname || '/';
+  const { signIn } = useAuth();
+  const router = useRouter();
 
   const {
     register,
@@ -34,8 +32,8 @@ const Login: React.FC = () => {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await login(data.email, data.password);
-      navigate(from, { replace: true });
+      await signIn(data.email, data.password);
+      router.push('/admin');
     } catch (error) {
       // Error is handled in AuthContext
     }
@@ -144,7 +142,7 @@ const Login: React.FC = () => {
           </div>
 
           <div className="mt-6">
-            <Link to="/register">
+            <Link href="/auth/register">
               <Button variant="ghost" className="w-full">
                 Créer un compte
               </Button>
