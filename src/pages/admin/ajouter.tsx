@@ -124,7 +124,7 @@ const AjouterAlbum: React.FC = () => {
         <div className="mb-6">
           <button
             onClick={handleBackClick}
-            className="inline-flex items-center px-4 py-2 text-gray-300 hover:text-white transition-colors duration-300 group"
+            className="inline-flex items-center px-4 py-2 text-charcoal hover:text-primary-600 transition-colors duration-300 group"
             disabled={isSubmitting}
           >
             <ArrowLeft className="mr-2 w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
@@ -134,14 +134,14 @@ const AjouterAlbum: React.FC = () => {
 
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Plus className="w-8 h-8 text-gray-600 dark:text-gray-400" />
+          <div className="w-16 h-16 bg-cream-light rounded-full flex items-center justify-center mx-auto mb-6">
+            <Plus className="w-8 h-8 text-taupe" />
           </div>
 
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          <h1 className="text-3xl md:text-4xl font-bold text-charcoal mb-4">
             Créer un nouvel album
           </h1>
-          <p className="text-gray-400 max-w-md mx-auto">
+          <p className="text-taupe max-w-md mx-auto">
             Ajoutez un nouvel album photo pour vos clients avec un code d'accès sécurisé.
           </p>
           <div className="w-24 h-1 bg-primary-400 mx-auto mt-6"></div>
@@ -153,16 +153,16 @@ const AjouterAlbum: React.FC = () => {
             <div className="flex items-center space-x-3">
               <div className="w-6 h-6 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
               <div className="flex-1">
-                <p className="text-blue-400 font-medium">
+                <p className="text-primary-600 font-medium">
                   {uploadProgress.stage}
                 </p>
                 {uploadProgress.current && uploadProgress.total && (
                   <div className="mt-2">
-                    <div className="flex justify-between text-sm text-gray-400 mb-1">
+                    <div className="flex justify-between text-sm text-charcoal mb-1">
                       <span>Progression</span>
                       <span>{uploadProgress.current}/{uploadProgress.total}</span>
                     </div>
-                    <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div className="w-full bg-gray-200 rounded-full h-2">
                       <div
                         className="bg-primary-500 h-2 rounded-full transition-all duration-300"
                         style={{
@@ -185,11 +185,11 @@ const AjouterAlbum: React.FC = () => {
                 <span className="text-red-400 text-xs">⚠️</span>
               </div>
               <div className="flex-1">
-                <h4 className="text-red-400 font-medium mb-1">Erreur de création</h4>
-                <p className="text-gray-300 text-sm">{error}</p>
+                <h4 className="text-red-600 font-medium mb-1">Erreur de création</h4>
+                <p className="text-charcoal text-sm">{error}</p>
                 <button
                   onClick={() => setError(null)}
-                  className="mt-3 text-sm text-red-400 hover:text-red-300 underline"
+                  className="mt-3 text-sm text-red-600 hover:text-red-500 underline"
                 >
                   Fermer ce message
                 </button>
@@ -199,7 +199,7 @@ const AjouterAlbum: React.FC = () => {
         )}
 
         {/* Formulaire */}
-        <div className="bg-gray-800 rounded-xl p-8 shadow-lg border border-gray-700">
+        <div className="bg-cream-light rounded-xl p-8 shadow-lg border border-gray-200">
           <AlbumForm
             onSubmit={handleFormSubmit}
             isSubmitting={isSubmitting}
@@ -213,10 +213,10 @@ const AjouterAlbum: React.FC = () => {
               <span className="text-yellow-400 text-xs">💡</span>
             </div>
             <div>
-              <h4 className="text-yellow-400 font-medium mb-2">
+              <h4 className="text-yellow-600 font-medium mb-2">
                 Informations importantes
               </h4>
-              <ul className="text-gray-300 text-sm space-y-1">
+              <ul className="text-charcoal text-sm space-y-1">
                 <li>• Le code d'accès sera généré automatiquement</li>
                 <li>• Les images seront stockées de manière sécurisée dans Firebase</li>
                 <li>• Les clients pourront télécharger les photos en haute résolution</li>
@@ -234,8 +234,8 @@ const AjouterAlbum: React.FC = () => {
                 <span className="text-red-400 text-xs">⚠️</span>
               </div>
               <div>
-                <h4 className="text-red-400 font-medium mb-1">Configuration Firebase requise</h4>
-                <p className="text-gray-300 text-sm">
+                <h4 className="text-red-600 font-medium mb-1">Configuration Firebase requise</h4>
+                <p className="text-charcoal text-sm">
                   Pour créer des albums, configurez Firebase dans le fichier .env.local avec vos clés de projet.
                 </p>
               </div>

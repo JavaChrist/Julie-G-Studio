@@ -29,8 +29,12 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting }) => {
     { value: 'mariage', label: 'Mariage' },
     { value: 'grossesse', label: 'Grossesse' },
     { value: 'nouveau-ne', label: 'Nouveau-né' },
-    { value: 'enfant', label: 'Enfant' },
-    { value: 'animaux', label: 'Animaux' }
+    { value: 'enfants', label: 'Famille & Enfants' },
+    { value: 'animaux', label: 'Animaux' },
+    { value: 'portrait', label: 'Sénior' },
+    { value: 'spectacle', label: 'Spectacle' },
+    { value: 'entreprise', label: 'Métiers & Entreprises' },
+    { value: 'autre', label: 'Autre' }
   ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -142,7 +146,7 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting }) => {
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Titre de l'album */}
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-300 mb-2">
+        <label htmlFor="title" className="block text-sm font-medium text-charcoal mb-2">
           Titre de l'album *
         </label>
         <div className="relative">
@@ -152,21 +156,21 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting }) => {
             name="title"
             value={formData.title}
             onChange={handleInputChange}
-            className={`w-full px-4 py-3 pl-12 bg-gray-800 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${errors.title ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'
+            className={`w-full px-4 py-3 pl-12 bg-white border rounded-lg text-charcoal placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors ${errors.title ? 'border-red-500' : 'border-gray-300 focus:border-primary-500'
               }`}
             placeholder="Ex: Mariage de Laura & Pierre"
             disabled={isSubmitting}
           />
-          <Type className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+          <Type className="absolute left-4 top-3.5 w-5 h-5 text-taupe" />
         </div>
         {errors.title && (
-          <p className="mt-1 text-sm text-red-400">{errors.title}</p>
+          <p className="mt-1 text-sm text-red-600">{errors.title}</p>
         )}
       </div>
 
       {/* Nom du client */}
       <div>
-        <label htmlFor="clientName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="clientName" className="block text-sm font-medium text-charcoal mb-2">
           Nom du client
         </label>
         <div className="relative">
@@ -176,17 +180,17 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting }) => {
             name="clientName"
             value={formData.clientName}
             onChange={handleInputChange}
-            className="w-full px-4 py-3 pl-12 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 focus:border-blue-500 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-300"
+            className="w-full px-4 py-3 pl-12 bg-white border border-gray-300 focus:border-primary-500 rounded-lg text-charcoal placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-300"
             placeholder="Ex: Laura & Pierre"
             disabled={isSubmitting}
           />
-          <User className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+          <User className="absolute left-4 top-3.5 w-5 h-5 text-taupe" />
         </div>
       </div>
 
       {/* Catégorie */}
       <div>
-        <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="category" className="block text-sm font-medium text-charcoal mb-2">
           Catégorie *
         </label>
         <div className="relative">
@@ -195,7 +199,7 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting }) => {
             name="category"
             value={formData.category}
             onChange={handleInputChange}
-            className={`w-full px-4 py-3 pl-12 bg-white dark:bg-gray-800 border rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-300 ${errors.category ? 'border-red-500' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500'
+            className={`w-full px-4 py-3 pl-12 bg-white border rounded-lg text-charcoal focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-300 ${errors.category ? 'border-red-500' : 'border-gray-300 focus:border-primary-500'
               }`}
             disabled={isSubmitting}
           >
@@ -206,16 +210,16 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting }) => {
               </option>
             ))}
           </select>
-          <Tag className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+          <Tag className="absolute left-4 top-3.5 w-5 h-5 text-taupe" />
         </div>
         {errors.category && (
-          <p className="mt-1 text-sm text-red-400">{errors.category}</p>
+          <p className="mt-1 text-sm text-red-600">{errors.category}</p>
         )}
       </div>
 
       {/* Date de l'événement */}
       <div>
-        <label htmlFor="eventDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="eventDate" className="block text-sm font-medium text-charcoal mb-2">
           Date de l'événement
         </label>
         <div className="relative">
@@ -225,16 +229,16 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting }) => {
             name="eventDate"
             value={formData.eventDate}
             onChange={handleInputChange}
-            className="w-full px-4 py-3 pl-12 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 focus:border-blue-500 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-300"
+            className="w-full px-4 py-3 pl-12 bg-white border border-gray-300 focus:border-primary-500 rounded-lg text-charcoal focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-300"
             disabled={isSubmitting}
           />
-          <Calendar className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+          <Calendar className="absolute left-4 top-3.5 w-5 h-5 text-taupe" />
         </div>
       </div>
 
       {/* Date d'expiration */}
       <div>
-        <label htmlFor="expireAt" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="expireAt" className="block text-sm font-medium text-charcoal mb-2">
           Date d'expiration *
         </label>
         <div className="relative">
@@ -245,24 +249,24 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting }) => {
             value={formData.expireAt}
             onChange={handleInputChange}
             min={new Date().toISOString().split('T')[0]}
-            className={`w-full px-4 py-3 pl-12 bg-white dark:bg-gray-800 border rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-300 ${errors.expireAt ? 'border-red-500' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500'
+            className={`w-full px-4 py-3 pl-12 bg-white border rounded-lg text-charcoal focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-300 ${errors.expireAt ? 'border-red-500' : 'border-gray-300 focus:border-primary-500'
               }`}
             disabled={isSubmitting}
             placeholder={getDefaultExpireDate()}
           />
-          <Calendar className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+          <Calendar className="absolute left-4 top-3.5 w-5 h-5 text-taupe" />
         </div>
         {errors.expireAt && (
-          <p className="mt-1 text-sm text-red-400">{errors.expireAt}</p>
+          <p className="mt-1 text-sm text-red-600">{errors.expireAt}</p>
         )}
-        <p className="mt-1 text-xs text-gray-500">
+        <p className="mt-1 text-xs text-taupe">
           Recommandé: 3-6 mois après l'événement
         </p>
       </div>
 
       {/* Options avancées */}
-      <div className="bg-gray-100 dark:bg-gray-700/50 rounded-lg p-4 space-y-4 border border-gray-200 dark:border-gray-600">
-        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Options d'accès</h3>
+      <div className="bg-gray-50 rounded-lg p-4 space-y-4 border border-gray-200">
+        <h3 className="text-sm font-medium text-charcoal mb-3">Options d'accès</h3>
 
         {/* Autoriser les téléchargements */}
         <div className="flex items-center space-x-3">
@@ -272,35 +276,35 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting }) => {
             name="allowDownload"
             checked={formData.allowDownload}
             onChange={(e) => setFormData(prev => ({ ...prev, allowDownload: e.target.checked }))}
-            className="w-4 h-4 text-blue-500 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
+            className="w-4 h-4 text-primary-500 bg-white border-gray-300 rounded focus:ring-primary-500 focus:ring-2"
             disabled={isSubmitting}
           />
-          <label htmlFor="allowDownload" className="text-sm text-gray-700 dark:text-gray-300">
+          <label htmlFor="allowDownload" className="text-sm text-charcoal">
             Autoriser le téléchargement des photos
           </label>
         </div>
-        <p className="text-xs text-gray-500 dark:text-gray-400 ml-7">
+        <p className="text-xs text-taupe ml-7">
           Les clients pourront télécharger les photos en haute résolution
         </p>
       </div>
 
       {/* Upload des images */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-charcoal mb-2">
           Photos de l'album *
         </label>
 
         {/* Zone de drop */}
         <div
           onClick={() => fileInputRef.current?.click()}
-          className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${errors.images ? 'border-red-500 bg-red-500/5' : 'border-gray-600 hover:border-gray-500 bg-gray-800/50'
+          className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${errors.images ? 'border-red-500 bg-red-500/5' : 'border-gray-300 hover:border-primary-500 bg-gray-50'
             }`}
         >
-          <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-white font-medium mb-2">
+          <Upload className="w-12 h-12 text-taupe mx-auto mb-4" />
+          <p className="text-charcoal font-medium mb-2">
             Cliquez pour sélectionner des images
           </p>
-          <p className="text-gray-400 text-sm">
+          <p className="text-taupe text-sm">
             JPG, PNG, WebP • Max 10MB par image • Max 50 images
           </p>
         </div>
@@ -316,13 +320,13 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting }) => {
         />
 
         {errors.images && (
-          <p className="mt-1 text-sm text-red-400">{errors.images}</p>
+          <p className="mt-1 text-sm text-red-600">{errors.images}</p>
         )}
 
         {imageErrors.length > 0 && (
           <div className="mt-2 space-y-1">
             {imageErrors.map((error, index) => (
-              <p key={index} className="text-sm text-red-400">{error}</p>
+              <p key={index} className="text-sm text-red-600">{error}</p>
             ))}
           </div>
         )}
@@ -331,13 +335,13 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting }) => {
         {imagePreviews.length > 0 && (
           <div className="mt-4">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-medium text-gray-300">
+              <h4 className="text-sm font-medium text-charcoal">
                 Images sélectionnées ({imagePreviews.length})
               </h4>
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="text-blue-400 hover:text-blue-300 text-sm"
+                className="text-primary-600 hover:text-primary-500 text-sm"
                 disabled={isSubmitting}
               >
                 Ajouter plus
@@ -371,7 +375,7 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting }) => {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-blue-400 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300 flex items-center justify-center space-x-2"
+        className="w-full bg-primary-500 hover:bg-primary-600 disabled:bg-primary-400 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300 flex items-center justify-center space-x-2"
       >
         {isSubmitting ? (
           <>
@@ -387,7 +391,7 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting }) => {
       </button>
 
       {/* Note */}
-      <p className="text-center text-sm text-gray-400">
+      <p className="text-center text-sm text-taupe">
         * Champs obligatoires
       </p>
     </form>

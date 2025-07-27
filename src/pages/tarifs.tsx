@@ -70,37 +70,74 @@ const Tarifs: React.FC = () => {
           </button>
         </div>
 
-        {/* Header avec titre et images circulaires de chaque côté */}
-        <div className="flex justify-center items-center mb-20 relative">
-          {/* Image demi-cercle gauche */}
-          <div className="absolute left-0 w-34 h-40 md:w-42 md:h-60 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
-            <img
-              src="/DSC_0649.jpg"
-              alt="Grossesse"
-              className="w-full h-full object-cover"
-            />
+        {/* Header avec titre et images - Layout responsive */}
+        <div className="mb-20">
+          {/* Layout Mobile : Vertical (image-titre-image) */}
+          <div className="sm:hidden flex flex-col items-center space-y-8">
+            {/* Image du haut sur mobile */}
+            <div className="w-32 h-32 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
+              <img
+                src="/DSC_0649.jpg"
+                alt="Grossesse"
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            {/* Titre central */}
+            <div className="text-center px-4">
+              <h1 className="text-3xl font-light text-charcoal mb-2 tracking-wider">
+                TARIFS <span className="italic font-serif">&</span>
+              </h1>
+              <h2 className="text-3xl font-light text-charcoal mb-6 tracking-wider">
+                PRESTATIONS
+              </h2>
+              <p className="text-sm text-gray-600 tracking-widest">
+                SESSION PORTRAIT & FAMILLE
+              </p>
+            </div>
+
+            {/* Image du bas sur mobile */}
+            <div className="w-32 h-32 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
+              <img
+                src="/DSC_0400.jpg"
+                alt="Famille"
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
 
-          {/* Titre central */}
-          <div className="text-center">
-            <h1 className="text-5xl md:text-6xl font-light text-charcoal mb-2 tracking-wider">
-              TARIFS <span className="italic font-serif">&</span>
-            </h1>
-            <h2 className="text-5xl md:text-6xl font-light text-charcoal mb-6 tracking-wider">
-              PRESTATIONS
-            </h2>
-            <p className="text-lg text-gray-600 tracking-widest">
-              SESSION PORTRAIT & FAMILLE
-            </p>
-          </div>
+          {/* Layout Desktop : Horizontal (image-titre-image) */}
+          <div className="hidden sm:flex justify-center items-center relative">
+            {/* Image demi-cercle gauche */}
+            <div className="absolute left-0 w-34 h-40 md:w-42 md:h-60 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
+              <img
+                src="/DSC_0649.jpg"
+                alt="Grossesse"
+                className="w-full h-full object-cover"
+              />
+            </div>
 
-          {/* Image demi-cercle droite */}
-          <div className="absolute right-0 w-34 h-40 md:w-42 md:h-60 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
-            <img
-              src="/DSC_0400.jpg"
-              alt="Famille"
-              className="w-full h-full object-cover"
-            />
+            {/* Titre central */}
+            <div className="text-center px-8 md:px-16">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-charcoal mb-2 tracking-wider">
+                TARIFS <span className="italic font-serif">&</span>
+              </h1>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-charcoal mb-6 tracking-wider">
+                PRESTATIONS
+              </h2>
+              <p className="text-base md:text-lg text-gray-600 tracking-widest">
+                SESSION PORTRAIT & FAMILLE
+              </p>
+            </div>
+
+            {/* Image demi-cercle droite */}
+            <div className="absolute right-0 w-34 h-40 md:w-42 md:h-60 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
+              <img
+                src="/DSC_0400.jpg"
+                alt="Famille"
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
         </div>
 
@@ -127,10 +164,10 @@ const Tarifs: React.FC = () => {
                   <h3 className="text-lg font-semibold text-charcoal mb-2 tracking-wide">
                     {formule.title}
                   </h3>
-                  <p className="text-sm text-gray-600 mb-4 italic">
+                  <p className="text-sm text-gray-600 mb-4">
                     {formule.subtitle}
                   </p>
-                  <p className="text-sm font-medium text-gray-700 mb-6">
+                  <p className="text-sm text-gray-700 mb-6">
                     {formule.duration}
                   </p>
 

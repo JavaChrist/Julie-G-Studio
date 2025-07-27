@@ -47,7 +47,7 @@ export default function Home() {
             alt="Julie Grohens Photographe d'émotions"
             width={800}
             height={280}
-            className="mx-auto mb-6 h-48 md:h-72 lg:h-80 xl:h-96 w-auto"
+            className="mx-auto mb-6 h-96 md:h-80 lg:h-96 xl:h-96 w-auto"
             priority
           />
           <p className="text-xl md:text-2xl mb-8 max-w-4xl mx-auto font-light">

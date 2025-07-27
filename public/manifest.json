@@ -13,9 +13,10 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
+  "orientation": "portrait-primary", 
   "theme_color": "#D08C60",
   "background_color": "#F5E9DC",
+  "prefer_related_applications": false,
   "categories": ["photo", "portfolio", "lifestyle"],
   "screenshots": [
     {

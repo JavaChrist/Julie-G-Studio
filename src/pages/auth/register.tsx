@@ -19,6 +19,11 @@ const RegisterPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('Inscription fermée - Contactez l\'administrateur pour obtenir un accès');
+    return;
+
+    // Code d'inscription désactivé pour des raisons de sécurité
+    /*
     setError('');
 
     if (password !== confirmPassword) {
@@ -41,6 +46,7 @@ const RegisterPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
+    */
   };
 
   return (

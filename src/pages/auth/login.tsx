@@ -5,6 +5,7 @@ import Layout from '../../components/layout/Layout';
 import { Button, Input } from '../../components/ui';
 import { useAuth } from '../../hooks/useAuth';
 import { ROUTES } from '../../utils/constants';
+import { isUserAdmin } from '../../services/adminService';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -12,7 +13,7 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { signIn } = useAuth();
+  const { signIn, signOut } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,7 +23,17 @@ const LoginPage: React.FC = () => {
 
     try {
       await signIn(email, password);
-      router.push('/admin'); // Redirection vers le dashboard admin Julie G Studio
+
+      // Vérifier si l'utilisateur est admin après connexion
+      const userIsAdmin = await isUserAdmin();
+
+      if (userIsAdmin) {
+        router.push('/admin'); // Redirection vers le dashboard admin
+      } else {
+        setError('Accès refusé - Vous n\'avez pas les permissions administrateur');
+        // Déconnecter l'utilisateur s'il n'est pas admin
+        await signOut();
+      }
     } catch (error: any) {
       setError(error.message || 'Erreur lors de la connexion');
     } finally {

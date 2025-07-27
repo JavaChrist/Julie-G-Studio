@@ -12,21 +12,21 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="icon" type="image/png" sizes="16x16" href="/logo192.png" />
         <link rel="shortcut icon" href="/favicon.ico" />
 
-        {/* Apple Touch Icons - Tailles spécifiques iOS */}
-        <link rel="apple-touch-icon" sizes="180x180" href="/logo512.png" />
-        <link rel="apple-touch-icon" sizes="167x167" href="/logo192.png" />
-        <link rel="apple-touch-icon" sizes="152x152" href="/logo192.png" />
-        <link rel="apple-touch-icon" sizes="144x144" href="/logo192.png" />
-        <link rel="apple-touch-icon" sizes="120x120" href="/logo192.png" />
-        <link rel="apple-touch-icon" sizes="114x114" href="/logo192.png" />
-        <link rel="apple-touch-icon" sizes="76x76" href="/logo192.png" />
-        <link rel="apple-touch-icon" sizes="72x72" href="/logo192.png" />
-        <link rel="apple-touch-icon" sizes="60x60" href="/logo192.png" />
-        <link rel="apple-touch-icon" sizes="57x57" href="/logo192.png" />
-        <link rel="apple-touch-icon" href="/logo192.png" />
-        
+        {/* Apple Touch Icons - iOS PWA (fond opaque requis) */}
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="167x167" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
         {/* Startup Images iOS */}
-        <link rel="apple-touch-startup-image" href="/logo512.png" />
+        <link rel="apple-touch-startup-image" href="/apple-touch-icon.png" />
 
         {/* Meta pour PWA */}
         <meta name="application-name" content="Julie Grohens Photographe d'émotions" />
@@ -35,12 +35,17 @@ export default function App({ Component, pageProps }: AppProps) {
 
         {/* Configuration PWA Apple */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-touch-fullscreen" content="yes" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
 
         {/* Viewport optimisé pour PWA */}
-        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+
+        {/* Meta pour forcer PWA iOS */}
+        <meta name="mobile-web-app-title" content="Julie Grohens" />
+        <meta name="apple-mobile-web-app-title" content="Julie Grohens" />
       </Head>
       <Component {...pageProps} />
     </AuthProvider>

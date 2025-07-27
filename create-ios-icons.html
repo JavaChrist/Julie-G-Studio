@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Générateur d'icônes iOS PWA</title>
+</head>
+
+<body>
+  <h1>Générateur d'icônes iOS avec fond opaque</h1>
+  <canvas id="canvas" width="180" height="180" style="border: 1px solid #ccc;"></canvas>
+  <br><br>
+  <button onclick="generateIcon(180)">180x180</button>
+  <button onclick="generateIcon(152)">152x152</button>
+  <button onclick="generateIcon(144)">144x144</button>
+  <button onclick="generateIcon(120)">120x120</button>
+  <br><br>
+  <div id="downloads"></div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Couleur de fond cream-main de Julie Grohens
+    const backgroundColor = '#F5E9DC';
+
+    function generateIcon(size) {
+      canvas.width = size;
+      canvas.height = size;
+
+      // Remplir avec couleur de fond opaque
+      ctx.fillStyle = backgroundColor;
+      ctx.fillRect(0, 0, size, size);
+
+      // Charger et dessiner le logo
+      const img = new Image();
+      img.onload = function () {
+        // Calculer la taille du logo (80% de la taille de l'icône)
+        const logoSize = size * 0.8;
+        const x = (size - logoSize) / 2;
+        const y = (size - logoSize) / 2;
+
+        ctx.drawImage(img, x, y, logoSize, logoSize);
+
+        // Créer le lien de téléchargement
+        canvas.toBlob(function (blob) {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `apple-touch-icon-${size}x${size}.png`;
+          a.textContent = `Télécharger ${size}x${size}`;
+          a.style.display = 'block';
+          a.style.margin = '5px 0';
+          document.getElementById('downloads').appendChild(a);
+        });
+      };
+      img.src = 'logo192.png'; // Assurez-vous que ce fichier existe
+    }
+  </script>
+</body>
+
+</html>
