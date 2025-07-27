@@ -5,7 +5,7 @@ const Portfolios: React.FC = () => {
   const portfolioCategories = [
     {
       title: 'Mariage',
-      image: '/Couple mariage.jpg',
+      image: '/DSC_0027.jpg',
       link: '/portfolios/mariage'
     },
     {
@@ -15,30 +15,45 @@ const Portfolios: React.FC = () => {
     },
     {
       title: 'Nouveau-né',
-      image: '/Famille-enfant-epaule.jpg',
+      image: '/DSC_0384.jpg',
       link: '/portfolios/nouveau-ne'
     },
     {
-      title: 'Enfants',
-      image: '/Famille-au-bord-de-eau.jpg',
+      title: 'Famille & Enfants',
+      image: '/DSC_0813.jpg',
       link: '/portfolios/enfants'
     },
     {
       title: 'Animaux',
-      image: '/Cheval.jpg',
+      image: '/DSC_0164.jpg',
       link: '/portfolios/animaux'
+    },
+    {
+      title: 'Sénior',
+      image: '/DSC_0092 (1).jpg',
+      link: '/portfolios/portrait'
+    },
+    {
+      title: 'Spectacle',
+      image: '/DSC_1244.jpg',
+      link: '/portfolios/spectacle'
+    },
+    {
+      title: 'Métiers & Entreprises',
+      image: '/DSC_1090.jpg',
+      link: '/portfolios/portrait'
     }
   ];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300 py-16 px-4">
+    <div className="min-h-screen bg-white transition-colors duration-300 py-16 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             Mes univers
           </h1>
-          <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto">
             Découvrez mon travail par catégorie
           </p>
         </div>
@@ -61,12 +76,12 @@ const Portfolios: React.FC = () => {
 
         {/* Call to action */}
         <div className="text-center mt-16">
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
+          <p className="text-gray-600 mb-6">
             Chaque univers raconte une histoire unique
           </p>
           <button
-                            onClick={() => typeof window !== 'undefined' && window.history.back()}
-            className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-transparent dark:border dark:border-white/20 dark:hover:bg-white/10 text-white rounded-lg transition-colors duration-300 font-medium"
+            onClick={() => typeof window !== 'undefined' && window.history.back()}
+            className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-300 font-medium"
           >
             <svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />

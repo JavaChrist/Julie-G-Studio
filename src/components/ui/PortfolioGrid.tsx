@@ -15,32 +15,50 @@ const PortfolioGrid: React.FC = () => {
     {
       id: 'mariage',
       name: 'Mariage',
-      image: '/Couple mariage.jpg',
-      description: 'Immortalisez le plus beau jour de votre vie'
+      image: '/DSC_0027.jpg',
+      description: ' L’émotion d’un oui'
     },
     {
       id: 'grossesse',
       name: 'Grossesse',
       image: '/Femme-enceinte-dans-pres.jpg',
-      description: 'Capturer la magie de l\'attente'
+      description: 'Porter la vie en lumière'
     },
     {
       id: 'nouveau-ne',
       name: 'Nouveau-né',
-      image: '/Famille-enfant-epaule.jpg',
-      description: 'Les premiers instants précieux'
+      image: '/DSC_0384.jpg',
+      description: 'Les premiers souffles de la vie'
     },
     {
       id: 'enfants',
-      name: 'Enfants',
-      image: '/Famille-au-bord-de-eau.jpg',
-      description: 'Grandir en images'
+      name: 'Famille & Enfants',
+      image: '/DSC_0813.jpg',
+      description: 'Instants complices en famille'
     },
     {
       id: 'animaux',
       name: 'Animaux',
-      image: '/Cheval.jpg',
-      description: 'Vos compagnons à quatre pattes'
+      image: '/DSC_0164.jpg',
+      description: 'Complicités à quatre pattes'
+    },
+    {
+      id: 'portrait',
+      name: 'Sénior',
+      image: '/DSC_0092 (1).jpg',
+      description: 'L’émotion d’une vie en images'
+    },
+    {
+      id: 'spectacle',
+      name: 'Spectacle',
+      image: '/DSC_1244.jpg',
+      description: 'L’\émotion sur scène'
+    },
+    {
+      id: 'entreprise',
+      name: 'Métiers & Entreprises',
+      image: '/DSC_1090.jpg',
+      description: 'Votre savoir-faire en images'
     }
   ];
 
@@ -49,25 +67,24 @@ const PortfolioGrid: React.FC = () => {
   };
 
   return (
-    <section id="portfolios" className="py-16 px-4 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
+    <section id="portfolios" className="py-16 px-4 bg-gray-50 transition-colors duration-300">
       <div className="max-w-6xl mx-auto">
         {/* Titre de section */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Mes univers
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Découvrez mes différents styles photographiques adaptés à chaque moment de votre vie
           </p>
         </div>
 
         {/* Grille des portfolios */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {portfolioCategories.map((category, index) => (
             <div
               key={category.id}
-              className={`relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 ${index === 4 ? 'col-span-2 md:col-span-1' : ''
-                }`}
+              className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               onClick={() => handleCategoryClick(category.id)}
             >
               {/* Image de fond */}
@@ -80,7 +97,7 @@ const PortfolioGrid: React.FC = () => {
                 />
 
                 {/* Overlay gradient adaptatif */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent dark:from-black/70 dark:via-black/20 dark:to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
 
                 {/* Overlay hover */}
                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
