@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/router';
 import ContactModal from '../components/ui/ContactModal';
+import Navbar from '../components/ui/Navbar';
 
 const Tarifs: React.FC = () => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
@@ -57,137 +58,142 @@ const Tarifs: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-cream-main py-8 px-4">
-      <div className="max-w-6xl mx-auto">
-        {/* Bouton retour */}
-        <div className="mb-8">
-          <button
-            onClick={handleBackClick}
-            className="inline-flex items-center px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors duration-300 group"
-          >
-            <ArrowLeft className="mr-2 w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
-            Retour à l'accueil
-          </button>
-        </div>
+    <div className="min-h-screen bg-cream-main">
+      {/* Navbar */}
+      <Navbar onContactClick={openContactModal} />
 
-        {/* Header avec titre et images - Layout responsive */}
-        <div className="mb-20">
-          {/* Layout Mobile : Vertical (image-titre-image) */}
-          <div className="sm:hidden flex flex-col items-center space-y-8">
-            {/* Image du haut sur mobile */}
-            <div className="w-32 h-32 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
-              <img
-                src="/DSC_0649.jpg"
-                alt="Grossesse"
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Titre central */}
-            <div className="text-center px-4">
-              <h1 className="text-3xl font-light text-charcoal mb-2 tracking-wider">
-                TARIFS <span className="italic font-serif">&</span>
-              </h1>
-              <h2 className="text-3xl font-light text-charcoal mb-6 tracking-wider">
-                PRESTATIONS
-              </h2>
-              <p className="text-sm text-gray-600 tracking-widest">
-                SESSION PORTRAIT & FAMILLE
-              </p>
-            </div>
-
-            {/* Image du bas sur mobile */}
-            <div className="w-32 h-32 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
-              <img
-                src="/DSC_0400.jpg"
-                alt="Famille"
-                className="w-full h-full object-cover"
-              />
-            </div>
+      <div className="py-8 px-4 pt-navbar-safe">
+        <div className="max-w-6xl mx-auto">
+          {/* Bouton retour */}
+          <div className="mb-8">
+            <button
+              onClick={handleBackClick}
+              className="inline-flex items-center px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors duration-300 group"
+            >
+              <ArrowLeft className="mr-2 w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
+              Retour à l'accueil
+            </button>
           </div>
 
-          {/* Layout Desktop : Horizontal (image-titre-image) */}
-          <div className="hidden sm:flex justify-center items-center relative">
-            {/* Image demi-cercle gauche */}
-            <div className="absolute left-0 w-34 h-40 md:w-42 md:h-60 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
-              <img
-                src="/DSC_0649.jpg"
-                alt="Grossesse"
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Titre central */}
-            <div className="text-center px-8 md:px-16">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-charcoal mb-2 tracking-wider">
-                TARIFS <span className="italic font-serif">&</span>
-              </h1>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-charcoal mb-6 tracking-wider">
-                PRESTATIONS
-              </h2>
-              <p className="text-base md:text-lg text-gray-600 tracking-widest">
-                SESSION PORTRAIT & FAMILLE
-              </p>
-            </div>
-
-            {/* Image demi-cercle droite */}
-            <div className="absolute right-0 w-34 h-40 md:w-42 md:h-60 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
-              <img
-                src="/DSC_0400.jpg"
-                alt="Famille"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Photos et Formules - chaque photo centrée au-dessus de sa formule */}
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
-          {formules.map((formule, index) => {
-            const images = ["/DSC_0813.jpg", "/DSC_0001.webp", "/DSC_0384.jpg"];
-            const alts = ["Portrait enfant", "Portrait enfant", "Portrait famille"];
-
-            return (
-              <div key={index} className="flex flex-col items-center">
-                {/* Photo centrée */}
-                <div className="w-42 h-60 mb-8 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
-                  <img
-                    src={images[index]}
-                    alt={alts[index]}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                {/* Formule */}
-                <div className="bg-cream-light p-8 text-center border border-gray-200 w-full">
-                  <h3 className="text-lg font-semibold text-charcoal mb-2 tracking-wide">
-                    {formule.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-4">
-                    {formule.subtitle}
-                  </p>
-                  <p className="text-sm text-gray-700 mb-6">
-                    {formule.duration}
-                  </p>
-
-                  <div className="space-y-3 mb-8">
-                    {formule.features.map((feature, featureIndex) => (
-                      <p key={featureIndex} className="text-xs text-gray-600 leading-relaxed">
-                        {feature}
-                      </p>
-                    ))}
-                  </div>
-
-                  <div className="border border-gray-400 inline-block px-8 py-3">
-                    <span className="text-2xl font-light text-charcoal">
-                      {formule.price}
-                    </span>
-                  </div>
-                </div>
+          {/* Header avec titre et images - Layout responsive */}
+          <div className="mb-20">
+            {/* Layout Mobile : Vertical (image-titre-image) */}
+            <div className="sm:hidden flex flex-col items-center space-y-8">
+              {/* Image du haut sur mobile */}
+              <div className="w-32 h-32 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
+                <img
+                  src="/DSC_0649.jpg"
+                  alt="Grossesse"
+                  className="w-full h-full object-cover"
+                />
               </div>
-            );
-          })}
+
+              {/* Titre central */}
+              <div className="text-center px-4">
+                <h1 className="text-3xl font-light text-charcoal mb-2 tracking-wider">
+                  TARIFS <span className="italic font-serif">&</span>
+                </h1>
+                <h2 className="text-3xl font-light text-charcoal mb-6 tracking-wider">
+                  PRESTATIONS
+                </h2>
+                <p className="text-sm text-gray-600 tracking-widest">
+                  SESSION PORTRAIT & FAMILLE
+                </p>
+              </div>
+
+              {/* Image du bas sur mobile */}
+              <div className="w-32 h-32 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
+                <img
+                  src="/DSC_0400.jpg"
+                  alt="Famille"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+
+            {/* Layout Desktop : Horizontal (image-titre-image) */}
+            <div className="hidden sm:flex justify-center items-center relative">
+              {/* Image demi-cercle gauche */}
+              <div className="absolute left-0 w-34 h-40 md:w-42 md:h-60 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
+                <img
+                  src="/DSC_0649.jpg"
+                  alt="Grossesse"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Titre central */}
+              <div className="text-center px-8 md:px-16">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-charcoal mb-2 tracking-wider">
+                  TARIFS <span className="italic font-serif">&</span>
+                </h1>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-charcoal mb-6 tracking-wider">
+                  PRESTATIONS
+                </h2>
+                <p className="text-base md:text-lg text-gray-600 tracking-widest">
+                  SESSION PORTRAIT & FAMILLE
+                </p>
+              </div>
+
+              {/* Image demi-cercle droite */}
+              <div className="absolute right-0 w-34 h-40 md:w-42 md:h-60 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
+                <img
+                  src="/DSC_0400.jpg"
+                  alt="Famille"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Photos et Formules - chaque photo centrée au-dessus de sa formule */}
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+            {formules.map((formule, index) => {
+              const images = ["/DSC_0813.jpg", "/DSC_0001.webp", "/DSC_0384.jpg"];
+              const alts = ["Portrait enfant", "Portrait enfant", "Portrait famille"];
+
+              return (
+                <div key={index} className="flex flex-col items-center">
+                  {/* Photo centrée */}
+                  <div className="w-42 h-60 mb-8 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
+                    <img
+                      src={images[index]}
+                      alt={alts[index]}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  {/* Formule */}
+                  <div className="bg-cream-light p-8 text-center border border-gray-200 w-full">
+                    <h3 className="text-lg font-semibold text-charcoal mb-2 tracking-wide">
+                      {formule.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                      {formule.subtitle}
+                    </p>
+                    <p className="text-sm text-gray-700 mb-6">
+                      {formule.duration}
+                    </p>
+
+                    <div className="space-y-3 mb-8">
+                      {formule.features.map((feature, featureIndex) => (
+                        <p key={featureIndex} className="text-xs text-gray-600 leading-relaxed">
+                          {feature}
+                        </p>
+                      ))}
+                    </div>
+
+                    <div className="border border-gray-400 inline-block px-8 py-3">
+                      <span className="text-2xl font-light text-charcoal">
+                        {formule.price}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 

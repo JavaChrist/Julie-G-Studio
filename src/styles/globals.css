@@ -1,3 +1,40 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Safe areas iOS - iPhone avec Dynamic Island, encoche, etc. */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Améliorer les zones tactiles sur iOS */
+button,
+a {
+  touch-action: manipulation;
+}
+
+/* Taille minimale recommandée par Apple pour les éléments tactiles */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Éviter les problèmes de zoom sur iOS lors du focus sur les inputs */
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+
+/* Classe utilitaire pour espacer le contenu sous la navbar sur iOS */
+.pt-navbar-safe {
+  padding-top: calc(4rem + env(safe-area-inset-top));
+}
+
+/* Hauteur de la navbar adaptée aux safe areas */
+.navbar-height {
+  height: calc(4rem + env(safe-area-inset-top));
+}

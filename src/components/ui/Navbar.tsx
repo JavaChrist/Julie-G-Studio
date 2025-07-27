@@ -45,9 +45,9 @@ const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
   return (
     <>
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 transition-colors duration-300">
+      <nav className="fixed top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 transition-colors duration-300" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-16 min-h-16">
             {/* Logo cliquable */}
             <button
               onClick={() => router.push('/')}
@@ -67,8 +67,9 @@ const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
             <div className="md:hidden flex items-center space-x-2">
               <button
                 onClick={toggleMenu}
-                className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                className="p-3 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors touch-manipulation"
                 aria-label="Menu"
+                style={{ minHeight: '44px', minWidth: '44px' }}
               >
                 {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
@@ -100,13 +101,14 @@ const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
           />
 
           {/* Menu modal */}
-          <div className="fixed top-0 right-0 h-full w-64 bg-white shadow-xl">
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+          <div className="fixed top-0 right-0 h-full w-64 bg-white shadow-xl" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+            <div className="flex items-center justify-between p-4 border-b border-gray-200" style={{ marginTop: 'env(safe-area-inset-top)' }}>
               <span className="text-lg font-semibold text-gray-900">Menu</span>
               <button
                 onClick={() => setIsMenuOpen(false)}
-                className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                className="p-3 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors touch-manipulation"
                 aria-label="Fermer le menu"
+                style={{ minHeight: '44px', minWidth: '44px' }}
               >
                 <X className="w-6 h-6" />
               </button>
