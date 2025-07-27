@@ -39,10 +39,6 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, imageSrc, imageAlt, onC
     try {
       console.log('Téléchargement de:', imageSrc);
 
-      // Fetch l'image depuis Firebase Storage
-      const response = await fetch(imageSrc);
-      const blob = await response.blob();
-
       // Extraire le nom de fichier depuis l'URL ou générer un nom
       let fileName = 'photo.jpg';
       try {
@@ -50,7 +46,9 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, imageSrc, imageAlt, onC
         const pathParts = url.pathname.split('/');
         const lastPart = pathParts[pathParts.length - 1];
         if (lastPart && lastPart.includes('.')) {
-          fileName = decodeURIComponent(lastPart);
+          const decodedPath = decodeURIComponent(lastPart);
+          // Extraire juste le nom de fichier si c'est un chemin
+          fileName = decodedPath.split('/').pop() || `photo-${Date.now()}.jpg`;
         } else {
           fileName = `photo-${Date.now()}.jpg`;
         }
@@ -58,26 +56,43 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, imageSrc, imageAlt, onC
         fileName = `photo-${Date.now()}.jpg`;
       }
 
-      // Créer un blob URL et déclencher le téléchargement
-      const blobUrl = window.URL.createObjectURL(blob);
+      // Méthode alternative sans fetch pour éviter CORS
+      // Créer un lien de téléchargement direct
       const link = document.createElement('a');
-      link.href = blobUrl;
+      link.href = imageSrc;
       link.download = fileName;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+
+      // Ajouter des attributs pour forcer le téléchargement
+      link.style.display = 'none';
       document.body.appendChild(link);
+
+      // Cliquer sur le lien pour déclencher le téléchargement
       link.click();
+
+      // Nettoyer
       document.body.removeChild(link);
 
-      // Nettoyer le blob URL
-      window.URL.revokeObjectURL(blobUrl);
-
       console.log('Téléchargement initié:', fileName);
+
+      // Petit délai pour l'UX puis success
+      setTimeout(() => {
+        console.log('Téléchargement démarré avec succès');
+      }, 500);
+
     } catch (error) {
       console.error('Erreur lors du téléchargement:', error);
 
-      // Fallback: ouvrir l'image dans un nouvel onglet
+      // Fallback: ouvrir l'image dans un nouvel onglet avec instruction
       const newWindow = window.open(imageSrc, '_blank');
-      if (!newWindow) {
-        alert('Le téléchargement automatique a échoué. Veuillez cliquer droit sur l\'image et sélectionner "Enregistrer l\'image sous..."');
+      if (newWindow) {
+        // Message d'instruction pour l'utilisateur
+        setTimeout(() => {
+          alert('Photo ouverte dans un nouvel onglet. Pour la télécharger, cliquez droit sur l\'image et sélectionnez "Enregistrer l\'image sous..."');
+        }, 1000);
+      } else {
+        alert('Impossible d\'ouvrir la photo. Veuillez autoriser les pop-ups pour ce site.');
       }
     } finally {
       setIsDownloading(false);
@@ -93,8 +108,8 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, imageSrc, imageAlt, onC
           onClick={handleDownload}
           disabled={isDownloading}
           className={`flex items-center space-x-2 px-4 py-2 rounded-lg backdrop-blur-sm transition-colors duration-300 ${isDownloading
-              ? 'bg-gray-500/80 cursor-not-allowed'
-              : 'bg-primary-500/80 hover:bg-primary-600'
+            ? 'bg-gray-500/80 cursor-not-allowed'
+            : 'bg-primary-500/80 hover:bg-primary-600'
             } text-white`}
           aria-label="Télécharger la photo"
         >

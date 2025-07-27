@@ -80,17 +80,27 @@ const AlbumPage: React.FC = () => {
     try {
       console.log('Début du téléchargement de toutes les photos...');
 
-      // Télécharger les photos une par une avec un délai pour éviter de surcharger
+      // Informer l'utilisateur du processus
+      const userConfirm = confirm(
+        `Vous allez télécharger ${album.photos.length} photos. ` +
+        `Le navigateur peut demander l'autorisation de télécharger plusieurs fichiers. ` +
+        `Cliquez sur "Autoriser" si cette question apparaît. ` +
+        `Continuer ?`
+      );
+
+      if (!userConfirm) {
+        setIsDownloading(false);
+        setDownloadProgress(0);
+        return;
+      }
+
+      // Télécharger les photos une par une sans fetch (évite CORS)
       for (let i = 0; i < album.photos.length; i++) {
         const photo = album.photos[i];
 
         try {
           // Mettre à jour la progression
           setDownloadProgress(Math.round(((i + 1) / album.photos.length) * 100));
-
-          // Fetch l'image
-          const response = await fetch(photo);
-          const blob = await response.blob();
 
           // Générer un nom de fichier
           let fileName = `${album.title || 'album'}-photo-${i + 1}.jpg`;
@@ -99,26 +109,28 @@ const AlbumPage: React.FC = () => {
             const pathParts = url.pathname.split('/');
             const lastPart = pathParts[pathParts.length - 1];
             if (lastPart && lastPart.includes('.')) {
-              const decodedName = decodeURIComponent(lastPart);
-              fileName = `${album.title || 'album'}-${decodedName}`;
+              const decodedPath = decodeURIComponent(lastPart);
+              const originalName = decodedPath.split('/').pop() || `photo-${i + 1}.jpg`;
+              fileName = `${album.title || 'album'}-${originalName}`;
             }
           } catch {
             // Garder le nom par défaut
           }
 
-          // Créer le lien de téléchargement
-          const blobUrl = window.URL.createObjectURL(blob);
+          // Créer le lien de téléchargement direct (sans fetch)
           const link = document.createElement('a');
-          link.href = blobUrl;
+          link.href = photo;
           link.download = fileName;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+          link.style.display = 'none';
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
-          window.URL.revokeObjectURL(blobUrl);
 
-          // Petit délai entre les téléchargements pour éviter de surcharger
+          // Délai entre les téléchargements pour éviter de surcharger le navigateur
           if (i < album.photos.length - 1) {
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 800));
           }
 
         } catch (error) {
@@ -128,6 +140,7 @@ const AlbumPage: React.FC = () => {
       }
 
       console.log('Téléchargement terminé pour toutes les photos disponibles');
+      alert(`Téléchargement de ${album.photos.length} photos initié avec succès ! Vérifiez votre dossier de téléchargements.`);
 
     } catch (error) {
       console.error('Erreur lors du téléchargement global:', error);
@@ -227,8 +240,8 @@ const AlbumPage: React.FC = () => {
                 onClick={handleDownloadAll}
                 disabled={isDownloading}
                 className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-colors duration-300 font-medium whitespace-nowrap ${isDownloading
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-primary-500 hover:bg-primary-600'
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-primary-500 hover:bg-primary-600'
                   } text-white`}
               >
                 {isDownloading ? (
