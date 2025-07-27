@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, Download } from 'lucide-react';
 
 interface ImageModalProps {
@@ -9,6 +9,8 @@ interface ImageModalProps {
 }
 
 const ImageModal: React.FC<ImageModalProps> = ({ isOpen, imageSrc, imageAlt, onClose }) => {
+  const [isDownloading, setIsDownloading] = useState(false);
+
   // Gérer la fermeture avec Escape
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -31,17 +33,55 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, imageSrc, imageAlt, onC
 
   if (!isOpen) return null;
 
-  const handleDownload = () => {
-    // Mock du téléchargement - à implémenter plus tard
-    console.log('Téléchargement de:', imageSrc);
+  const handleDownload = async () => {
+    setIsDownloading(true);
 
-    // Créer un lien temporaire pour le téléchargement
-    const link = document.createElement('a');
-    link.href = imageSrc;
-    link.download = `photo-${Date.now()}.jpg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      console.log('Téléchargement de:', imageSrc);
+
+      // Fetch l'image depuis Firebase Storage
+      const response = await fetch(imageSrc);
+      const blob = await response.blob();
+
+      // Extraire le nom de fichier depuis l'URL ou générer un nom
+      let fileName = 'photo.jpg';
+      try {
+        const url = new URL(imageSrc);
+        const pathParts = url.pathname.split('/');
+        const lastPart = pathParts[pathParts.length - 1];
+        if (lastPart && lastPart.includes('.')) {
+          fileName = decodeURIComponent(lastPart);
+        } else {
+          fileName = `photo-${Date.now()}.jpg`;
+        }
+      } catch {
+        fileName = `photo-${Date.now()}.jpg`;
+      }
+
+      // Créer un blob URL et déclencher le téléchargement
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Nettoyer le blob URL
+      window.URL.revokeObjectURL(blobUrl);
+
+      console.log('Téléchargement initié:', fileName);
+    } catch (error) {
+      console.error('Erreur lors du téléchargement:', error);
+
+      // Fallback: ouvrir l'image dans un nouvel onglet
+      const newWindow = window.open(imageSrc, '_blank');
+      if (!newWindow) {
+        alert('Le téléchargement automatique a échoué. Veuillez cliquer droit sur l\'image et sélectionner "Enregistrer l\'image sous..."');
+      }
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   return (
@@ -51,11 +91,24 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, imageSrc, imageAlt, onC
         {/* Bouton télécharger */}
         <button
           onClick={handleDownload}
-          className="flex items-center space-x-2 px-4 py-2 bg-blue-500/80 hover:bg-blue-500 text-white rounded-lg backdrop-blur-sm transition-colors duration-300"
+          disabled={isDownloading}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-lg backdrop-blur-sm transition-colors duration-300 ${isDownloading
+              ? 'bg-gray-500/80 cursor-not-allowed'
+              : 'bg-primary-500/80 hover:bg-primary-600'
+            } text-white`}
           aria-label="Télécharger la photo"
         >
-          <Download className="w-4 h-4" />
-          <span className="hidden sm:inline">Télécharger</span>
+          {isDownloading ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span className="hidden sm:inline">Téléchargement...</span>
+            </>
+          ) : (
+            <>
+              <Download className="w-4 h-4" />
+              <span className="hidden sm:inline">Télécharger</span>
+            </>
+          )}
         </button>
 
         {/* Bouton fermer */}

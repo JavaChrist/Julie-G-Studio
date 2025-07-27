@@ -21,11 +21,11 @@ const AlbumGallery: React.FC<AlbumGalleryProps> = ({ images, albumTitle }) => {
   if (!images || images.length === 0) {
     return (
       <div className="text-center py-12">
-        <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
           <span className="text-2xl">📷</span>
         </div>
-        <h3 className="text-xl font-semibold text-white mb-2">Album vide</h3>
-        <p className="text-gray-400">Aucune photo disponible pour le moment.</p>
+        <h3 className="text-xl font-semibold text-charcoal mb-2">Album vide</h3>
+        <p className="text-taupe">Aucune photo disponible pour le moment.</p>
       </div>
     );
   }
@@ -37,7 +37,7 @@ const AlbumGallery: React.FC<AlbumGalleryProps> = ({ images, albumTitle }) => {
         {images.map((image, index) => (
           <div
             key={index}
-            className="relative group cursor-pointer overflow-hidden rounded-lg bg-gray-800 aspect-square"
+            className="relative group cursor-pointer overflow-hidden rounded-lg bg-gray-200 aspect-square"
             onClick={() => openModal(image)}
           >
             {/* Image */}
@@ -64,8 +64,8 @@ const AlbumGallery: React.FC<AlbumGalleryProps> = ({ images, albumTitle }) => {
       </div>
 
       {/* Statistiques de l'album */}
-      <div className="mt-8 bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-        <div className="flex items-center justify-between text-sm text-gray-300">
+      <div className="mt-8 bg-cream-light rounded-lg p-4 border border-gray-200">
+        <div className="flex items-center justify-between text-sm text-taupe">
           <span className="flex items-center">
             <Camera className="w-4 h-4 mr-2" />
             {images.length} photo{images.length > 1 ? 's' : ''} dans cet album
