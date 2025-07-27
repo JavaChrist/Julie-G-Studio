@@ -101,16 +101,17 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, imageSrc, imageAlt, onC
 
   return (
     <div className="fixed inset-0 z-50 bg-black/95 overflow-auto">
-      {/* Boutons de contrôle - fixes en haut */}
-      <div className="fixed top-4 left-4 right-4 z-[60] flex justify-between items-center">
+      {/* Boutons de contrôle - fixes en haut avec safe area */}
+      <div className="fixed top-4 left-4 right-4 z-[60] flex justify-between items-center" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         {/* Bouton télécharger */}
         <button
           onClick={handleDownload}
           disabled={isDownloading}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-lg backdrop-blur-sm transition-colors duration-300 ${isDownloading
+          className={`flex items-center space-x-2 px-4 py-3 rounded-lg backdrop-blur-sm transition-colors duration-300 touch-manipulation ${isDownloading
             ? 'bg-gray-500/80 cursor-not-allowed'
             : 'bg-primary-500/80 hover:bg-primary-600'
             } text-white`}
+          style={{ minHeight: '44px', minWidth: '44px' }}
           aria-label="Télécharger la photo"
         >
           {isDownloading ? (
@@ -126,15 +127,27 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, imageSrc, imageAlt, onC
           )}
         </button>
 
-        {/* Bouton fermer */}
+        {/* Bouton fermer - Zone tactile agrandie */}
         <button
           onClick={onClose}
-          className="w-12 h-12 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center transition-colors duration-300 border border-white/20"
-          aria-label="Fermer"
+          className="bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center transition-colors duration-300 border border-white/20 touch-manipulation"
+          style={{
+            minHeight: '56px',
+            minWidth: '56px',
+            width: '56px',
+            height: '56px',
+            padding: '16px'
+          }}
+          aria-label="Fermer la photo"
+          title="Appuyez pour fermer"
         >
           <X className="w-6 h-6 text-white" />
         </button>
       </div>
+
+      {/* Zone de fermeture élargie sur les côtés */}
+      <div className="fixed left-0 top-0 bottom-0 w-16 z-[55]" onClick={onClose} />
+      <div className="fixed right-0 top-0 bottom-0 w-16 z-[55]" onClick={onClose} />
 
       {/* Container avec scroll */}
       <div
@@ -149,16 +162,35 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, imageSrc, imageAlt, onC
             className="max-w-full h-auto max-h-[calc(100vh-8rem)] object-contain mx-auto block rounded-lg shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           />
+
+          {/* Bouton fermer mobile - supplémentaire en bas à droite */}
+          <button
+            onClick={onClose}
+            className="absolute -bottom-4 -right-4 sm:hidden bg-red-500/80 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors duration-300 touch-manipulation"
+            style={{
+              width: '60px',
+              height: '60px',
+              minHeight: '60px',
+              minWidth: '60px'
+            }}
+            aria-label="Fermer"
+            title="Fermer la photo"
+          >
+            <X className="w-8 h-8 text-white" />
+          </button>
         </div>
       </div>
 
       {/* Instructions de navigation */}
       <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[60]">
-        <div className="bg-black/50 backdrop-blur-sm text-white text-sm px-4 py-2 rounded-lg border border-white/20">
-          <span className="hidden sm:inline">Appuyez sur </span>
-          <kbd className="bg-white/20 px-2 py-1 rounded text-xs">ESC</kbd>
-          <span className="hidden sm:inline"> ou cliquez à l'extérieur pour fermer</span>
-          <span className="sm:hidden"> pour fermer</span>
+        <div className="bg-black/50 backdrop-blur-sm text-white text-sm px-4 py-2 rounded-lg border border-white/20 text-center">
+          <div className="hidden sm:block">
+            Appuyez sur <kbd className="bg-white/20 px-2 py-1 rounded text-xs mx-1">ESC</kbd> ou cliquez à l'extérieur pour fermer
+          </div>
+          <div className="sm:hidden">
+            Appuyez sur <kbd className="bg-white/20 px-2 py-1 rounded text-xs mx-1">X</kbd> en haut à droite<br />
+            ou touchez les côtés pour fermer
+          </div>
         </div>
       </div>
     </div>
