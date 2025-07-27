@@ -181,18 +181,10 @@ const extractStoragePath = (url: string): string | null => {
 };
 
 /**
- * Liste des emails autorisés à avoir un accès administrateur
- * À configurer avec les vrais emails des administrateurs
- */
-const ADMIN_EMAILS = [
-  'jgrohens.photographie@gmail.com', // Email principal de Julie
-  // Ajouter d'autres emails admin si nécessaire
-];
-
-/**
  * Vérifie si l'utilisateur connecté est admin
- * Sécurisé : seuls les emails dans ADMIN_EMAILS ont accès
- * @returns true si admin autorisé, false sinon
+ * Sécurisé : seuls les utilisateurs créés dans Firebase Authentication ont accès
+ * Les comptes sont gérés directement par l'administrateur dans Firebase Console
+ * @returns true si utilisateur authentifié Firebase, false sinon
  */
 export const isUserAdmin = async (): Promise<boolean> => {
   try {
@@ -208,16 +200,10 @@ export const isUserAdmin = async (): Promise<boolean> => {
       return false;
     }
 
-    // Vérifier si l'email de l'utilisateur est dans la liste des admins autorisés
-    const isAdmin = ADMIN_EMAILS.includes(currentUser.email.toLowerCase());
-
-    if (isAdmin) {
-      console.log(`Accès admin accordé pour: ${currentUser.email}`);
-    } else {
-      console.log(`Accès admin refusé pour: ${currentUser.email} - Email non autorisé`);
-    }
-
-    return isAdmin;
+    // Vérifier que l'utilisateur est bien authentifié via Firebase
+    // Seuls les comptes créés par l'admin dans Firebase Console peuvent se connecter
+    console.log(`Accès admin accordé pour: ${currentUser.email} (compte Firebase autorisé)`);
+    return true;
 
   } catch (error) {
     console.error('Erreur lors de la vérification admin:', error);
