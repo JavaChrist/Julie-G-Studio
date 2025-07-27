@@ -57,7 +57,7 @@ const Tarifs: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-cream-main py-8 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Bouton retour */}
         <div className="mb-8">
@@ -72,10 +72,10 @@ const Tarifs: React.FC = () => {
 
         {/* Header avec titre et images circulaires de chaque côté */}
         <div className="flex justify-center items-center mb-20 relative">
-          {/* Image circulaire gauche */}
-          <div className="absolute left-0 w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden">
+          {/* Image demi-cercle gauche */}
+          <div className="absolute left-0 w-34 h-40 md:w-42 md:h-60 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
             <img
-              src="/Femme-enceinte-dans-pres.jpg"
+              src="/DSC_0649.jpg"
               alt="Grossesse"
               className="w-full h-full object-cover"
             />
@@ -83,10 +83,10 @@ const Tarifs: React.FC = () => {
 
           {/* Titre central */}
           <div className="text-center">
-            <h1 className="text-5xl md:text-6xl font-light text-gray-800 mb-2 tracking-wider">
+            <h1 className="text-5xl md:text-6xl font-light text-charcoal mb-2 tracking-wider">
               TARIFS <span className="italic font-serif">&</span>
             </h1>
-            <h2 className="text-5xl md:text-6xl font-light text-gray-800 mb-6 tracking-wider">
+            <h2 className="text-5xl md:text-6xl font-light text-charcoal mb-6 tracking-wider">
               PRESTATIONS
             </h2>
             <p className="text-lg text-gray-600 tracking-widest">
@@ -94,10 +94,10 @@ const Tarifs: React.FC = () => {
             </p>
           </div>
 
-          {/* Image circulaire droite */}
-          <div className="absolute right-0 w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden">
+          {/* Image demi-cercle droite */}
+          <div className="absolute right-0 w-34 h-40 md:w-42 md:h-60 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
             <img
-              src="/Famille-enfant-epaule.jpg"
+              src="/DSC_0400.jpg"
               alt="Famille"
               className="w-full h-full object-cover"
             />
@@ -108,13 +108,13 @@ const Tarifs: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
           {formules.map((formule, index) => {
-            const images = ["/DSC_0026.jpg", "/DSC_0069.jpg", "/DSC_0156 (3).jpg"];
+            const images = ["/DSC_0813.jpg", "/DSC_0001.webp", "/DSC_0384.jpg"];
             const alts = ["Portrait enfant", "Portrait enfant", "Portrait famille"];
 
             return (
               <div key={index} className="flex flex-col items-center">
                 {/* Photo centrée */}
-                <div className="w-32 h-32 mb-8 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
+                <div className="w-42 h-60 mb-8 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
                   <img
                     src={images[index]}
                     alt={alts[index]}
@@ -123,8 +123,8 @@ const Tarifs: React.FC = () => {
                 </div>
 
                 {/* Formule */}
-                <div className="bg-white p-8 text-center border border-gray-200 w-full">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2 tracking-wide">
+                <div className="bg-cream-light p-8 text-center border border-gray-200 w-full">
+                  <h3 className="text-lg font-semibold text-charcoal mb-2 tracking-wide">
                     {formule.title}
                   </h3>
                   <p className="text-sm text-gray-600 mb-4 italic">
@@ -143,7 +143,7 @@ const Tarifs: React.FC = () => {
                   </div>
 
                   <div className="border border-gray-400 inline-block px-8 py-3">
-                    <span className="text-2xl font-light text-gray-800">
+                    <span className="text-2xl font-light text-charcoal">
                       {formule.price}
                     </span>
                   </div>

@@ -41,7 +41,7 @@ const Portfolios: React.FC = () => {
     {
       title: 'Métiers & Entreprises',
       image: '/DSC_1090.jpg',
-      link: '/portfolios/portrait'
+      link: '/portfolios/entreprise'
     }
   ];
 
@@ -53,8 +53,10 @@ const Portfolios: React.FC = () => {
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             Mes univers
           </h1>
-          <p className="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto">
-            Découvrez mon travail par catégorie
+          <p className="text-lg md:text-xl text-gray-700 max-w-4xl mx-auto">
+            Parce que les plus beaux souvenirs sont ceux que l’on ressent encore en les regardant. <br />
+            Derrière chaque regard, une histoire. Derrière chaque photo, une émotion. <br />
+            Avec délicatesse et sincérité, je capture ce qui compte : vos liens, vos instants vrais, votre amour.
           </p>
         </div>
 
@@ -81,7 +83,7 @@ const Portfolios: React.FC = () => {
           </p>
           <button
             onClick={() => typeof window !== 'undefined' && window.history.back()}
-            className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-300 font-medium"
+            className="inline-flex items-center px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors duration-300 font-medium"
           >
             <svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />

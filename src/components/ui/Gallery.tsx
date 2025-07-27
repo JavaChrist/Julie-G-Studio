@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { X } from 'lucide-react';
 
 interface GalleryProps {
@@ -57,11 +58,13 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
             onClick={() => openModal(image)}
           >
             <div className="aspect-square relative">
-              <img
+              <Image
                 src={image}
                 alt={`Photo ${index + 1}`}
-                className="w-full h-full object-cover"
-                loading="lazy"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 50vw, 33vw"
+                priority={index < 6}
               />
 
               {/* Overlay hover */}
@@ -80,7 +83,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
         ))}
       </div>
 
-            {/* Modale plein écran */}
+      {/* Modale plein écran */}
       {selectedImage && (
         <div className="fixed inset-0 z-50 bg-black/90 overflow-auto">
           {/* Bouton fermer - fixe en haut à droite */}
@@ -96,17 +99,21 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
           <div className="min-h-full flex items-center justify-center p-4">
             {/* Image container */}
             <div className="relative max-w-full max-h-full">
-              <img
+              <Image
                 src={selectedImage}
                 alt="Image agrandie"
-                className="max-w-full h-auto max-h-[calc(100vh-2rem)] object-contain mx-auto block"
+                width={1200}
+                height={800}
+                className="max-w-full h-auto max-h-[calc(100vh-2rem)] object-contain mx-auto"
+                style={{ width: 'auto', height: 'auto' }}
                 onClick={(e) => e.stopPropagation()}
+                priority
               />
             </div>
           </div>
 
           {/* Zone cliquable pour fermer - couvre toute la modale */}
-          <div 
+          <div
             className="absolute inset-0 -z-10"
             onClick={closeModal}
           />

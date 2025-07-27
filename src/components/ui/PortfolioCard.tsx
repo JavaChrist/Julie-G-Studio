@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 interface PortfolioCardProps {
@@ -21,15 +22,16 @@ const PortfolioCard: React.FC<PortfolioCardProps> = ({ title, image, link }) => 
     >
       {/* Image de fond */}
       <div className="aspect-square md:aspect-[4/5] relative">
-        <img
+        <Image
           src={image}
           alt={title}
-          className="w-full h-full object-cover"
-          loading="lazy"
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 50vw, 33vw"
         />
 
         {/* Overlay adaptatif */}
-        <div className="absolute inset-0 bg-black/30 dark:bg-black/60" />
+        <div className="absolute inset-0 bg-black/30" />
 
         {/* Overlay hover */}
         <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

@@ -96,10 +96,10 @@ const AjouterAlbum: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300 flex items-center justify-center">
+      <div className="min-h-screen bg-cream-main transition-colors duration-300 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-900 dark:text-white text-lg">Vérification des permissions...</p>
+          <div className="w-16 h-16 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-charcoal text-lg">Vérification des permissions...</p>
         </div>
       </div>
     );
@@ -107,18 +107,18 @@ const AjouterAlbum: React.FC = () => {
 
   if (!isAuthorized) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300 flex items-center justify-center">
+      <div className="min-h-screen bg-cream-main transition-colors duration-300 flex items-center justify-center">
         <div className="text-center">
-          <Shield className="w-16 h-16 text-gray-600 dark:text-gray-400 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Accès non autorisé</h1>
-          <p className="text-gray-600 dark:text-gray-400">Vous n'avez pas les permissions pour créer des albums.</p>
+          <Shield className="w-16 h-16 text-taupe mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-charcoal mb-2">Accès non autorisé</h1>
+          <p className="text-taupe">Vous n'avez pas les permissions pour créer des albums.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300 py-8 px-4">
+    <div className="min-h-screen bg-cream-main transition-colors duration-300 py-8 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Bouton retour */}
         <div className="mb-6">
@@ -144,14 +144,14 @@ const AjouterAlbum: React.FC = () => {
           <p className="text-gray-400 max-w-md mx-auto">
             Ajoutez un nouvel album photo pour vos clients avec un code d'accès sécurisé.
           </p>
-          <div className="w-24 h-1 bg-blue-400 mx-auto mt-6"></div>
+          <div className="w-24 h-1 bg-primary-400 mx-auto mt-6"></div>
         </div>
 
         {/* Indicateur de progression */}
         {uploadProgress && (
-          <div className="mb-8 bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+          <div className="mb-8 bg-primary-500/10 border border-primary-500/20 rounded-lg p-4">
             <div className="flex items-center space-x-3">
-              <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-6 h-6 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
               <div className="flex-1">
                 <p className="text-blue-400 font-medium">
                   {uploadProgress.stage}
@@ -164,7 +164,7 @@ const AjouterAlbum: React.FC = () => {
                     </div>
                     <div className="w-full bg-gray-700 rounded-full h-2">
                       <div
-                        className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                        className="bg-primary-500 h-2 rounded-full transition-all duration-300"
                         style={{
                           width: `${(uploadProgress.current / uploadProgress.total) * 100}%`
                         }}

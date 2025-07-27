@@ -1,4 +1,4 @@
-export const APP_NAME = 'Julie G Studio';
+export const APP_NAME = "Julie Grohens Photographe d'émotions";
 export const APP_DESCRIPTION = 'Photographe professionnelle en Normandie - Mariage, Naissance, Famille';
 
 export const ROUTES = {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Menu, X, Camera, Shield, LucideIcon } from 'lucide-react';
+import { Menu, X, Shield, LucideIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 interface MenuItem {
   label: string;
@@ -38,7 +39,7 @@ const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
     { label: 'Tarifs', action: () => router.push('/tarifs') },
     { label: 'Contact', action: () => router.push('/contact') },
     { label: 'Accès client', action: () => router.push('/acces'), icon: Shield },
-    { label: 'Admin', action: () => router.push('/admin'), icon: Camera },
+    { label: 'Admin', action: () => router.push('/admin') },
   ];
 
   return (
@@ -52,8 +53,14 @@ const Navbar: React.FC<NavbarProps> = ({ onContactClick }) => {
               onClick={() => router.push('/')}
               className="flex items-center hover:opacity-80 transition-opacity"
             >
-              <Camera className="w-8 h-8 text-blue-600" />
-              <span className="ml-2 text-xl font-bold text-gray-900">Julie G Studio</span>
+              <Image
+                src="/logo192.png"
+                alt="Logo Julie Grohens"
+                width={40}
+                height={40}
+                className="w-20 h-20"
+              />
+              <span className="ml-2 text-xl font-bold text-gray-900">Julie Grohens Photographe d'émotions</span>
             </button>
 
             {/* Actions mobiles */}

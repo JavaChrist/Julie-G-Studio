@@ -45,20 +45,20 @@ const RegisterPage: React.FC = () => {
 
   return (
     <Layout title="Inscription">
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-cream-main transition-colors duration-300 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div>
             <img
-              className="mx-auto h-12 w-auto"
+              className="mx-auto h-60 w-auto"
               src="/logo192.png"
               alt="Logo"
             />
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+            <h2 className="mt-6 text-center text-3xl font-extrabold text-charcoal">
               Créez votre compte
             </h2>
-            <p className="mt-2 text-center text-sm text-gray-700 dark:text-gray-400">
+            <p className="mt-2 text-center text-sm text-charcoal">
               Ou{' '}
-              <Link href={ROUTES.LOGIN} className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
+              <Link href={ROUTES.LOGIN} className="font-medium text-primary-600 hover:text-primary-500">
                 connectez-vous à votre compte existant
               </Link>
             </p>
@@ -66,7 +66,7 @@ const RegisterPage: React.FC = () => {
 
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             {error && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg">
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
                 {error}
               </div>
             )}

@@ -1,12 +1,27 @@
 {
-  "short_name": "Julie G Studio",
-  "name": "Julie G Studio - Photographe Normandie",
+  "short_name": "Julie Grohens",
+  "name": "Julie Grohens Photographe d'émotions - Photographe Normandie",
   "icons": [
-    { "src": "/logo192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/logo512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "/favicon.ico", "sizes": "16x16 24x24 32x32 48x48 64x64", "type": "image/x-icon" },
+    {
+      "src": "/logo192.png",
+      "sizes": "72x72 96x96 128x128 144x144 152x152 192x192",
+      "type": "image/png"
+    },
+    { "src": "/logo512.png", "sizes": "384x384 512x512", "type": "image/png" }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff"
+  "orientation": "portrait-primary",
+  "theme_color": "#D08C60",
+  "background_color": "#F5E9DC",
+  "categories": ["photo", "portfolio", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }

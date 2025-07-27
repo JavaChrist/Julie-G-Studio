@@ -39,7 +39,7 @@ const AlbumPage: React.FC = () => {
       const now = new Date();
 
       if (expireDate <= now) {
-        setErrorMessage('Cet album a expiré. Veuillez contacter Julie G Studio pour renouveler l\'accès.');
+        setErrorMessage("Cet album a expiré. Veuillez contacter Julie Grohens Photographe d'émotions pour renouveler l'accès.");
         setIsErrorModalOpen(true);
         setIsLoading(false);
         return;

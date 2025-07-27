@@ -83,33 +83,32 @@ const galleries: Record<string, string[]> = {
   ],
   portrait: [
     "/DSC_0092 (1).jpg",
-    "/DSC_0094.jpg",
-    "/DSC_0096.jpg",
-    "/DSC_0098.jpg",
-    "/DSC_0102.jpg",
-    "/DSC_0108.jpg",
-    "/DSC_0112.jpg",
-    "/DSC_0118.jpg"
+    "/DSC_0098 (1).jpg",
+    "/DSC_0120 (1).jpg"
   ],
   spectacle: [
     "/DSC_1244.jpg",
-    "/DSC_1246.jpg",
-    "/DSC_1248.jpg",
-    "/DSC_1252.jpg",
-    "/DSC_1256.jpg",
-    "/DSC_1260.jpg",
-    "/DSC_1264.jpg",
-    "/DSC_1268.jpg"
+    "/Cavalière.jpg",
+    "/DSC_0488 (3).jpg",
+    "/DSC_0982.jpg",
+    "/DSC_0992 (1).jpg",
+    "/DSC_1002.jpg",
+    "/DSC_1011.jpg",
+    "/DSC_1179 (1).jpg",
+    "/DSC_1191.jpg",
+    "/DSC_1225.jpg",
+    "/DSC_1244.jpg"
+
   ],
   entreprise: [
     "/DSC_1090.jpg",
-    "/DSC_1092.jpg",
-    "/DSC_1094.jpg",
-    "/DSC_1096.jpg",
-    "/DSC_1098.jpg",
+    "/DSC_1089.jpg",
+    "/DSC_1095.jpg",
     "/DSC_1100.jpg",
-    "/DSC_1102.jpg",
-    "/DSC_1104.jpg"
+    "/DSC_1154.jpg",
+    "/DSC_1158.jpg",
+    "/DSC_1164.jpg",
+    "/DSC_1166.jpg"
   ]
 };
 
@@ -173,7 +172,7 @@ const PortfolioCategory: React.FC = () => {
           </p>
           <button
             onClick={handleBackClick}
-            className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium"
+            className="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-300 font-medium"
           >
             <ArrowLeft className="mr-2 w-4 h-4" />
             Retour aux portfolios
@@ -199,7 +198,7 @@ const PortfolioCategory: React.FC = () => {
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             {categoryName}
           </h1>
-          <p className="text-lg text-gray-700">
+          <p className="text-lg text-gray-700 max-w-4xl">
             {categoryDescription}
           </p>
         </div>
@@ -212,12 +211,12 @@ const PortfolioCategory: React.FC = () => {
           <h3 className="text-2xl font-bold text-gray-900 mb-4">
             Vous aimez ce style ?
           </h3>
-          <p className="text-gray-700 mb-6">
+          <p className="text-gray-700 mb-6 max-w-3xl mx-auto">
             Contactez-moi pour discuter de votre projet et créer ensemble des souvenirs uniques
           </p>
           <button
             onClick={() => router.push('/')}
-            className="inline-flex items-center px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium"
+            className="inline-flex items-center px-8 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-300 font-medium"
           >
             Retour à l'accueil
           </button>

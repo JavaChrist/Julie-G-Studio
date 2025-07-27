@@ -53,7 +53,7 @@ const ErrorModal: React.FC<ErrorModalProps> = ({ isOpen, onClose, message }) => 
               {/* Informations de contact */}
               <div className="bg-gray-100 dark:bg-gray-700/50 rounded-lg p-4 mb-6 w-full border border-gray-200 dark:border-gray-600">
                 <h5 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                  💬 Contactez Julie G Studio
+                  💬 Contactez Julie Grohens Photographe d'émotions
                 </h5>
                 <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                   <div className="flex items-center space-x-2">

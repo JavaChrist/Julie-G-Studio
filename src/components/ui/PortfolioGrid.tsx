@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 interface PortfolioCategory {
@@ -89,11 +90,13 @@ const PortfolioGrid: React.FC = () => {
             >
               {/* Image de fond */}
               <div className="aspect-square md:aspect-[4/5] relative">
-                <img
+                <Image
                   src={category.image}
                   alt={category.name}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                  priority={index < 4}
                 />
 
                 {/* Overlay gradient adaptatif */}
@@ -132,7 +135,7 @@ const PortfolioGrid: React.FC = () => {
           </p>
           <button
             onClick={() => router.push('/portfolios')}
-            className="inline-flex items-center px-6 py-3 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-colors duration-300 font-medium"
+            className="inline-flex items-center px-6 py-3 border border-primary-600 text-primary-600 rounded-lg hover:bg-primary-600 hover:text-white transition-colors duration-300 font-medium"
           >
             Voir tous mes portfolios
             <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

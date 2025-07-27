@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Camera, Instagram, Facebook, ArrowDown, Shield, Mail, Phone, MapPin, Linkedin } from 'lucide-react';
+import Image from 'next/image';
+import { Instagram, Facebook, ArrowDown, Shield, Mail, Phone, MapPin, Linkedin } from 'lucide-react';
 import Link from 'next/link';
 import Navbar from '../components/ui/Navbar';
 import PortfolioGrid from '../components/ui/PortfolioGrid';
@@ -21,7 +22,7 @@ export default function Home() {
 
 
   return (
-    <div className="min-h-screen bg-white transition-colors duration-300">
+    <div className="min-h-screen bg-cream-main transition-colors duration-300">
       {/* Navbar */}
       <Navbar onContactClick={openContactModal} />
 
@@ -29,27 +30,32 @@ export default function Home() {
       <section id="hero" className="relative h-screen flex items-center justify-center overflow-hidden">
         {/* Image de fond */}
         <div className="absolute inset-0">
-          <img
+          <Image
             src="/DSC_0813.jpg"
             alt="Image de Soline fille de la photographe"
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
+            priority
           />
           <div className="absolute inset-0 bg-black/40" />
         </div>
 
         {/* Contenu centré */}
         <div className="relative z-10 text-center text-white px-4">
-          <img
+          <Image
             src="/SignatureJulieBlanc.png"
-            alt="Julie G Studio"
-            className="mx-auto mb-6 h-100 md:h-140 w-auto"
+            alt="Julie Grohens Photographe d'émotions"
+            width={800}
+            height={280}
+            className="mx-auto mb-6 h-48 md:h-72 lg:h-80 xl:h-96 w-auto"
+            priority
           />
-          <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto font-light">
+          <p className="text-xl md:text-2xl mb-8 max-w-4xl mx-auto font-light">
             Photographe d'émotions
           </p>
           <button
             onClick={scrollToPortfolios}
-            className="inline-flex items-center px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-medium text-lg shadow-lg hover:shadow-xl"
+            className="inline-flex items-center px-8 py-4 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors duration-300 font-medium text-lg shadow-lg hover:shadow-xl"
           >
             Voir les portfolios
             <ArrowDown className="ml-2 w-5 h-5" />
@@ -65,17 +71,17 @@ export default function Home() {
 
 
       {/* Section Contact CTA */}
-      <section className="py-16 px-4 bg-gradient-to-r from-blue-600 to-blue-700">
+      <section className="py-16 px-4 bg-gradient-to-r from-primary-500 to-primary-600">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
             Envie d'immortaliser vos plus beaux instants ?
           </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-primary-100 mb-8 max-w-4xl mx-auto">
             Contactez-moi pour discuter de votre projet et créer ensemble des souvenirs qui vous ressemblent
           </p>
           <button
             onClick={openContactModal}
-            className="inline-flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg hover:bg-gray-50 transition-colors duration-300 font-bold text-lg shadow-lg hover:shadow-xl"
+            className="inline-flex items-center px-8 py-4 bg-white text-primary-600 rounded-lg hover:bg-gray-50 transition-colors duration-300 font-bold text-lg shadow-lg hover:shadow-xl"
           >
             Contactez-moi
             <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,8 +98,14 @@ export default function Home() {
             {/* Logo et description */}
             <div>
               <div className="flex items-center mb-4">
-                <Camera className="w-8 h-8 text-gray-600" />
-                <span className="ml-2 text-xl font-bold">Julie G Studio</span>
+                <Image
+                  src="/logo192.png"
+                  alt="Logo Julie Grohens"
+                  width={32}
+                  height={32}
+                  className="w-20 h-20"
+                />
+                <span className="ml-2 text-xl font-bold">Julie Grohens Photographe d'émotions</span>
               </div>
               <p className="text-gray-300 mb-6">
                 Photographe passionnée, je capture l'émotion et l'authenticité de vos moments les plus précieux.
@@ -157,7 +169,13 @@ export default function Home() {
                 </li>
                 <li>
                   <Link href="/admin" className="text-gray-300 hover:text-white transition-colors flex items-center">
-                    <Camera className="w-4 h-4 mr-2" />
+                    <Image
+                      src="/logo192.png"
+                      alt="Logo"
+                      width={16}
+                      height={16}
+                      className="w-4 h-4 mr-2"
+                    />
                     Admin
                   </Link>
                 </li>
@@ -170,7 +188,7 @@ export default function Home() {
               <div className="space-y-2 text-gray-300">
                 <p className="flex items-center">
                   <Mail className="w-4 h-4 mr-2" />
-                  julie-g.studio@gmail.com
+                  jgrohens.photographie@gmail.com
                 </p>
                 <p className="flex items-center">
                   <Phone className="w-4 h-4 mr-2" />
@@ -187,7 +205,7 @@ export default function Home() {
           {/* Copyright */}
           <div className="border-t border-gray-800 mt-8 pt-8 text-center space-y-2">
             <p className="text-gray-600">
-              © 2025 Julie G Studio. Tous droits réservés.
+              © 2025 Julie Grohens Photographe d'émotions. Tous droits réservés.
             </p>
             <p className="text-sm text-gray-500">
               Réalisé par{' '}

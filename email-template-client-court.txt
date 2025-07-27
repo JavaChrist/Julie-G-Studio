@@ -1,0 +1,19 @@
+Objet : 📸 Vos photos sont disponibles !
+
+Bonjour [Prénom],
+
+Excellente nouvelle ! Vos photos de [type de séance] sont maintenant prêtes et vous attendent dans votre galerie privée.
+
+🔗 **ACCÈS RAPIDE :**
+• Site : https://[votre-site].com/acces  
+• Code : **[CODE_CLIENT]**
+
+Vos [nombre] photos retouchées sont disponibles en téléchargement jusqu'au [date].
+
+Des questions ? Contactez-moi au 06 XX XX XX XX ou par email.
+
+Merci pour votre confiance ! 
+
+Julie Grohens  
+📸 Photographe d'émotions
+🌐 https://[votre-site].com 

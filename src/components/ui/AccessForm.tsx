@@ -53,7 +53,7 @@ const AccessForm: React.FC<AccessFormProps> = ({ onError }) => {
         router.push(`/album/${code.toLowerCase()}`);
       } else {
         // Code invalide → afficher erreur
-        onError('Code invalide ou expiré. Veuillez contacter Julie G Studio.');
+        onError("Code invalide ou expiré. Veuillez contacter Julie Grohens Photographe d'émotions.");
       }
 
     } catch (error) {
@@ -68,7 +68,7 @@ const AccessForm: React.FC<AccessFormProps> = ({ onError }) => {
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Champ Code d'accès */}
       <div>
-        <label htmlFor="access-code" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="access-code" className="block text-sm font-medium text-charcoal mb-2">
           Code d'accès *
         </label>
         <div className="relative">
@@ -78,7 +78,7 @@ const AccessForm: React.FC<AccessFormProps> = ({ onError }) => {
             name="access-code"
             value={code}
             onChange={handleCodeChange}
-            className={`w-full px-4 py-3 pl-12 bg-white dark:bg-gray-800 border rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-300 uppercase tracking-wider ${codeError ? 'border-red-500' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500'
+            className={`w-full px-4 py-3 pl-12 bg-white border rounded-lg text-charcoal placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-300 uppercase tracking-wider ${codeError ? 'border-red-500' : 'border-gray-300 focus:border-primary-500'
               }`}
             placeholder="ENTREZ VOTRE CODE"
             disabled={isChecking}
@@ -96,7 +96,7 @@ const AccessForm: React.FC<AccessFormProps> = ({ onError }) => {
       <button
         type="submit"
         disabled={isChecking || code.length < 4}
-        className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300 flex items-center justify-center space-x-2"
+        className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300 flex items-center justify-center space-x-2"
       >
         {isChecking ? (
           <>
@@ -112,18 +112,18 @@ const AccessForm: React.FC<AccessFormProps> = ({ onError }) => {
       </button>
 
       {/* Aide */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+      <div className="bg-gray-100 rounded-lg p-4 border border-gray-200">
         <div className="flex items-start space-x-3">
           <div className="flex-shrink-0">
-            <div className="w-6 h-6 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
-              <Lightbulb className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+            <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center">
+              <Lightbulb className="w-4 h-4 text-gray-600" />
             </div>
           </div>
           <div>
-            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <h4 className="text-sm font-medium text-gray-800 mb-1">
               Besoin d'aide ?
             </h4>
-            <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+            <p className="text-xs text-gray-600 leading-relaxed">
               Votre code d'accès unique vous a été fourni par email après votre séance photo.
               En cas de problème, contactez-moi directement.
             </p>
@@ -132,7 +132,7 @@ const AccessForm: React.FC<AccessFormProps> = ({ onError }) => {
       </div>
 
       {/* Note de sécurité */}
-      <p className="text-center text-xs text-gray-600 dark:text-gray-500 flex items-center justify-center">
+      <p className="text-center text-xs text-gray-600 flex items-center justify-center">
         <Lock className="w-3 h-3 mr-1" />
         Vos photos sont protégées et accessibles uniquement avec votre code personnel
       </p>
