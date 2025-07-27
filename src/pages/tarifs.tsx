@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Heart, Baby, Users, PawPrint, Camera, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/router';
-import TarifCard from '../components/ui/TarifCard';
 import ContactModal from '../components/ui/ContactModal';
 
 const Tarifs: React.FC = () => {
@@ -15,189 +14,143 @@ const Tarifs: React.FC = () => {
     router.push('/');
   };
 
-  const prestations = [
+  const formules = [
     {
-      icon: <Heart className="w-full h-full" />,
-      title: "Mariage",
-      description: "Reportage complet de votre plus beau jour, de la préparation à la soirée",
-      price: "À partir de 900€",
+      title: "FORMULE FAMILLE ESSENTIELLE",
+      subtitle: "Les échanges de pré-séance et sa préparation.",
+      duration: "45min/1h de shoot",
       features: [
-        "Couverture complète de la journée",
-        "Photos de la préparation",
-        "Cérémonie et cocktail",
-        "Soirée dansante",
-        "Galerie en ligne privée",
-        "Retouches incluses"
-      ]
+        "L'utilisation de mon matériel photographique et informatique",
+        "10 photos sélectionnées par mon œil aguerri",
+        "Le temps de retouche des photos",
+        "Le droit de diffusion et de reproduction",
+        "Livrées sous format numérique"
+      ],
+      price: "210€"
     },
     {
-      icon: <Baby className="w-full h-full" />,
-      title: "Grossesse",
-      description: "Séance photo pour immortaliser cette période magique d'attente",
-      price: "120€",
+      title: "FORMULE FAMILLE CONFORT",
+      subtitle: "Les échanges de pré-séance et sa préparation.",
+      duration: "1h30/2h de shoot",
       features: [
-        "Séance de 1h",
-        "10 photos retouchées",
-        "Shooting en extérieur ou studio",
-        "Photos en couple incluses",
-        "Galerie en ligne"
-      ]
+        "L'utilisation de mon matériel photographique et informatique",
+        "20 photos sélectionnées par mon œil aguerri",
+        "Le temps de retouche des photos",
+        "Le droit de diffusion et de reproduction",
+        "Livrées sous format numérique"
+      ],
+      price: "370€"
     },
     {
-      icon: <Baby className="w-full h-full" />,
-      title: "Nouveau-né",
-      description: "Séance à domicile pour capturer les premiers instants de bébé",
-      price: "180€",
+      title: "FORMULE FAMILLE COMPLÈTE",
+      subtitle: "Les échanges de pré-séance et sa préparation.",
+      duration: "2h ou plus de shoot",
       features: [
-        "Séance de 2h à domicile",
-        "15 photos retouchées",
-        "Accessoires et décors fournis",
-        "Photos famille incluses",
-        "Ambiance cocooning et sécurisée"
-      ]
-    },
-    {
-      icon: <Users className="w-full h-full" />,
-      title: "Enfants & Famille",
-      description: "Séance conviviale pour capturer la complicité familiale",
-      price: "150€",
-      features: [
-        "Séance de 1h30",
-        "12 photos retouchées",
-        "En extérieur au choix",
-        "Ambiance naturelle et décontractée",
-        "Photos individuelles et de groupe"
-      ]
-    },
-    {
-      icon: <PawPrint className="w-full h-full" />,
-      title: "Animaux",
-      description: "Séance photo avec vos compagnons à quatre pattes",
-      price: "100€",
-      features: [
-        "Séance de 1h",
-        "8 photos retouchées",
-        "En extérieur ou à domicile",
-        "Photos avec et sans propriétaires",
-        "Patience et bienveillance garanties"
-      ]
+        "L'utilisation de mon matériel photographique et informatique",
+        "50 photos sélectionnées par mon œil aguerri",
+        "Le temps de retouche des photos",
+        "Le droit de diffusion et de reproduction",
+        "Livrées sous format numérique"
+      ],
+      price: "750€"
     }
   ];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300 py-16 px-4">
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Bouton retour */}
         <div className="mb-8">
           <button
             onClick={handleBackClick}
-            className="inline-flex items-center px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-300 group"
+            className="inline-flex items-center px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors duration-300 group"
           >
             <ArrowLeft className="mr-2 w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
             Retour à l'accueil
           </button>
         </div>
 
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            Tarifs
-          </h1>
-          <p className="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
-            Des prestations adaptées à chaque moment de vie
-          </p>
-          <div className="w-24 h-1 bg-blue-400 mx-auto mt-6"></div>
-        </div>
-
-        {/* Grille des prestations */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {prestations.map((prestation, index) => (
-            <TarifCard
-              key={index}
-              icon={prestation.icon}
-              title={prestation.title}
-              description={prestation.description}
-              price={prestation.price}
-              features={prestation.features}
+        {/* Header avec titre et images circulaires de chaque côté */}
+        <div className="flex justify-center items-center mb-20 relative">
+          {/* Image circulaire gauche */}
+          <div className="absolute left-0 w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden">
+            <img
+              src="/Femme-enceinte-dans-pres.jpg"
+              alt="Grossesse"
+              className="w-full h-full object-cover"
             />
-          ))}
-        </div>
+          </div>
 
-        {/* Section informations supplémentaires */}
-        <div className="bg-gray-800 rounded-xl p-8 mb-12">
-          <h2 className="text-2xl font-bold text-white mb-6 text-center">
-            Informations importantes
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">Inclus dans tous les forfaits</h3>
-              <ul className="space-y-2 text-gray-300">
-                <li className="flex items-center">
-                  <svg className="w-4 h-4 text-gray-600 dark:text-gray-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  Retouches professionnelles
-                </li>
-                <li className="flex items-center">
-                  <svg className="w-4 h-4 text-gray-600 dark:text-gray-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  Galerie en ligne privée
-                </li>
-                <li className="flex items-center">
-                  <svg className="w-4 h-4 text-gray-600 dark:text-gray-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  Photos en haute résolution
-                </li>
-                <li className="flex items-center">
-                  <svg className="w-4 h-4 text-gray-600 dark:text-gray-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  Livraison sous 15 jours
-                </li>
-              </ul>
-            </div>
+          {/* Titre central */}
+          <div className="text-center">
+            <h1 className="text-5xl md:text-6xl font-light text-gray-800 mb-2 tracking-wider">
+              TARIFS <span className="italic font-serif">&</span>
+            </h1>
+            <h2 className="text-5xl md:text-6xl font-light text-gray-800 mb-6 tracking-wider">
+              PRESTATIONS
+            </h2>
+            <p className="text-lg text-gray-600 tracking-widest">
+              SESSION PORTRAIT & FAMILLE
+            </p>
+          </div>
 
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">Options supplémentaires</h3>
-              <ul className="space-y-2 text-gray-300">
-                <li className="flex justify-between">
-                  <span>Album photo premium</span>
-                  <span className="text-gray-600 dark:text-gray-400">+80€</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Tirages papier (lot de 20)</span>
-                  <span className="text-gray-600 dark:text-gray-400">+25€</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Retouches supplémentaires</span>
-                  <span className="text-gray-600 dark:text-gray-400">5€/photo</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Déplacement (+50km)</span>
-                  <span className="text-gray-600 dark:text-gray-400">0,50€/km</span>
-                </li>
-              </ul>
-            </div>
+          {/* Image circulaire droite */}
+          <div className="absolute right-0 w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden">
+            <img
+              src="/Famille-enfant-epaule.jpg"
+              alt="Famille"
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
 
-        {/* Call to action */}
-        <div className="text-center bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-12">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Une question ? Un projet ?
-          </h2>
-          <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
-            Chaque projet est unique. Contactez-moi pour discuter de vos besoins et obtenir un devis personnalisé gratuit.
-          </p>
-          <button
-            onClick={openContactModal}
-            className="inline-flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg hover:bg-gray-50 transition-colors duration-300 font-bold text-lg shadow-lg hover:shadow-xl"
-          >
-            <Camera className="mr-3 w-5 h-5" />
-            Demander un devis personnalisé
-          </button>
+        {/* Photos et Formules - chaque photo centrée au-dessus de sa formule */}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+          {formules.map((formule, index) => {
+            const images = ["/DSC_0026.jpg", "/DSC_0069.jpg", "/DSC_0156 (3).jpg"];
+            const alts = ["Portrait enfant", "Portrait enfant", "Portrait famille"];
+
+            return (
+              <div key={index} className="flex flex-col items-center">
+                {/* Photo centrée */}
+                <div className="w-32 h-32 mb-8 overflow-hidden" style={{ borderRadius: '50% 50% 0 0' }}>
+                  <img
+                    src={images[index]}
+                    alt={alts[index]}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                {/* Formule */}
+                <div className="bg-white p-8 text-center border border-gray-200 w-full">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2 tracking-wide">
+                    {formule.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4 italic">
+                    {formule.subtitle}
+                  </p>
+                  <p className="text-sm font-medium text-gray-700 mb-6">
+                    {formule.duration}
+                  </p>
+
+                  <div className="space-y-3 mb-8">
+                    {formule.features.map((feature, featureIndex) => (
+                      <p key={featureIndex} className="text-xs text-gray-600 leading-relaxed">
+                        {feature}
+                      </p>
+                    ))}
+                  </div>
+
+                  <div className="border border-gray-400 inline-block px-8 py-3">
+                    <span className="text-2xl font-light text-gray-800">
+                      {formule.price}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
