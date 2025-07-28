@@ -82,10 +82,10 @@ const AlbumPage: React.FC = () => {
 
       // Informer l'utilisateur du processus
       const userConfirm = confirm(
-        `Vous allez télécharger ${album.photos.length} photos. ` +
-        `Le navigateur peut demander l'autorisation de télécharger plusieurs fichiers. ` +
-        `Cliquez sur "Autoriser" si cette question apparaît. ` +
-        `Continuer ?`
+        `Télécharger toutes les ${album.photos.length} photos ?\n\n` +
+        `⚠️ IMPORTANT: Votre navigateur va demander l'autorisation de télécharger plusieurs fichiers.\n` +
+        `Cliquez sur "AUTORISER" ou "ALLOW" quand cette popup apparaît.\n\n` +
+        `Continuer le téléchargement ?`
       );
 
       if (!userConfirm) {
@@ -128,9 +128,9 @@ const AlbumPage: React.FC = () => {
           link.click();
           document.body.removeChild(link);
 
-          // Délai entre les téléchargements pour éviter de surcharger le navigateur
+          // Délai court entre les téléchargements
           if (i < album.photos.length - 1) {
-            await new Promise(resolve => setTimeout(resolve, 800));
+            await new Promise(resolve => setTimeout(resolve, 300));
           }
 
         } catch (error) {

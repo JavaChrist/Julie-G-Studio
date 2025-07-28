@@ -71,30 +71,24 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, imageSrc, imageAlt, onC
       // Cliquer sur le lien pour déclencher le téléchargement
       link.click();
 
-      // Nettoyer
+      // Nettoyer immédiatement
       document.body.removeChild(link);
 
       console.log('Téléchargement initié:', fileName);
 
-      // Petit délai pour l'UX puis success
-      setTimeout(() => {
-        console.log('Téléchargement démarré avec succès');
-      }, 500);
+      // Réinitialiser immédiatement pour permettre la fermeture
+      setIsDownloading(false);
 
     } catch (error) {
       console.error('Erreur lors du téléchargement:', error);
 
-      // Fallback: ouvrir l'image dans un nouvel onglet avec instruction
+      // Fallback: ouvrir l'image dans un nouvel onglet
       const newWindow = window.open(imageSrc, '_blank');
-      if (newWindow) {
-        // Message d'instruction pour l'utilisateur
-        setTimeout(() => {
-          alert('Photo ouverte dans un nouvel onglet. Pour la télécharger, cliquez droit sur l\'image et sélectionnez "Enregistrer l\'image sous..."');
-        }, 1000);
-      } else {
-        alert('Impossible d\'ouvrir la photo. Veuillez autoriser les pop-ups pour ce site.');
+      if (!newWindow) {
+        alert('Impossible de télécharger. Autorisez les pop-ups ou cliquez droit sur l\'image → "Enregistrer sous"');
       }
-    } finally {
+
+      // Réinitialiser l'état immédiatement en cas d'erreur
       setIsDownloading(false);
     }
   };
@@ -145,9 +139,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, imageSrc, imageAlt, onC
         </button>
       </div>
 
-      {/* Zone de fermeture élargie sur les côtés */}
-      <div className="fixed left-0 top-0 bottom-0 w-16 z-[55]" onClick={onClose} />
-      <div className="fixed right-0 top-0 bottom-0 w-16 z-[55]" onClick={onClose} />
+
 
       {/* Container avec scroll */}
       <div
@@ -163,21 +155,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, imageSrc, imageAlt, onC
             onClick={(e) => e.stopPropagation()}
           />
 
-          {/* Bouton fermer mobile - supplémentaire en bas à droite */}
-          <button
-            onClick={onClose}
-            className="absolute -bottom-4 -right-4 sm:hidden bg-red-500/80 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors duration-300 touch-manipulation"
-            style={{
-              width: '60px',
-              height: '60px',
-              minHeight: '60px',
-              minWidth: '60px'
-            }}
-            aria-label="Fermer"
-            title="Fermer la photo"
-          >
-            <X className="w-8 h-8 text-white" />
-          </button>
+
         </div>
       </div>
 
