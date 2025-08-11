@@ -4,6 +4,7 @@ import { Plus, BarChart3, Clock, AlertTriangle, Shield, Loader, ArrowLeft, LogOu
 import { getAllAlbums, extendAlbum, deleteAlbum, disableAlbum, getAdminStats, isUserAdmin } from '../services/adminService';
 import { Album, AdminStats } from '../types';
 import AdminAlbumCard from '../components/ui/AdminAlbumCard';
+import Modal from '../components/ui/Modal';
 import { useAuth } from '../hooks/useAuth';
 
 const AdminDashboard: React.FC = () => {
@@ -20,6 +21,12 @@ const AdminDashboard: React.FC = () => {
     albums: []
   });
   const [refreshing, setRefreshing] = useState(false);
+
+  // États modales centralisées
+  const [extendTarget, setExtendTarget] = useState<Album | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Album | null>(null);
+  const [disableTarget, setDisableTarget] = useState<Album | null>(null);
+  const [isWorking, setIsWorking] = useState(false);
 
   const loadDashboardData = useCallback(async () => {
     try {
@@ -61,6 +68,7 @@ const AdminDashboard: React.FC = () => {
 
   const handleExtendAlbum = async (albumId: string) => {
     try {
+      setIsWorking(true);
       const success = await extendAlbum(albumId);
       if (success) {
         // Recharger les données pour voir la mise à jour
@@ -71,11 +79,15 @@ const AdminDashboard: React.FC = () => {
       }
     } catch (error) {
       console.error('Erreur lors de la prolongation:', error);
+    } finally {
+      setIsWorking(false);
+      setExtendTarget(null);
     }
   };
 
   const handleDeleteAlbum = async (albumId: string) => {
     try {
+      setIsWorking(true);
       const albumToDelete = albums.find(album => album.id === albumId);
       if (!albumToDelete) return;
 
@@ -89,11 +101,15 @@ const AdminDashboard: React.FC = () => {
       }
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
+    } finally {
+      setIsWorking(false);
+      setDeleteTarget(null);
     }
   };
 
   const handleDisableAlbum = async (albumId: string) => {
     try {
+      setIsWorking(true);
       const success = await disableAlbum(albumId);
       if (success) {
         // Recharger les données pour voir la mise à jour
@@ -104,6 +120,9 @@ const AdminDashboard: React.FC = () => {
       }
     } catch (error) {
       console.error('Erreur lors de la désactivation/activation:', error);
+    } finally {
+      setIsWorking(false);
+      setDisableTarget(null);
     }
   };
 
@@ -296,9 +315,9 @@ const AdminDashboard: React.FC = () => {
                 <AdminAlbumCard
                   key={album.id}
                   album={album}
-                  onExtend={handleExtendAlbum}
-                  onDelete={handleDeleteAlbum}
-                  onDisable={handleDisableAlbum}
+                  onOpenExtend={(a) => setExtendTarget(a)}
+                  onOpenDelete={(a) => setDeleteTarget(a)}
+                  onOpenDisable={(a) => setDisableTarget(a)}
                 />
               ))}
             </div>
@@ -307,6 +326,101 @@ const AdminDashboard: React.FC = () => {
 
 
       </div>
+
+      {/* Modal Prolonger */}
+      <Modal
+        isOpen={!!extendTarget}
+        onClose={() => (!isWorking ? setExtendTarget(null) : undefined)}
+        title="Prolonger l'album"
+      >
+        {extendTarget && (
+          <div>
+            <p className="text-gray-700 mb-4">
+              Voulez-vous prolonger l'album <strong>{extendTarget.title}</strong> de 30 jours et le réactiver si besoin ?
+            </p>
+            <div className="flex gap-3">
+              <button
+                className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg"
+                onClick={() => setExtendTarget(null)}
+                disabled={isWorking}
+              >
+                Annuler
+              </button>
+              <button
+                className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                onClick={() => handleExtendAlbum(extendTarget.id)}
+                disabled={isWorking}
+              >
+                {isWorking ? 'Traitement...' : 'Confirmer'}
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Modal Supprimer */}
+      <Modal
+        isOpen={!!deleteTarget}
+        onClose={() => (!isWorking ? setDeleteTarget(null) : undefined)}
+        title="Supprimer l'album"
+      >
+        {deleteTarget && (
+          <div>
+            <p className="text-gray-700 mb-4">
+              Êtes-vous sûr de vouloir supprimer l'album <strong>{deleteTarget.title}</strong> ? Cette action est irréversible.
+            </p>
+            <div className="flex gap-3">
+              <button
+                className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg"
+                onClick={() => setDeleteTarget(null)}
+                disabled={isWorking}
+              >
+                Annuler
+              </button>
+              <button
+                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg"
+                onClick={() => handleDeleteAlbum(deleteTarget.id)}
+                disabled={isWorking}
+              >
+                {isWorking ? 'Suppression...' : 'Supprimer définitivement'}
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Modal Désactiver/Activer */}
+      <Modal
+        isOpen={!!disableTarget}
+        onClose={() => (!isWorking ? setDisableTarget(null) : undefined)}
+        title={disableTarget?.active ? "Désactiver l'album" : "Activer l'album"}
+      >
+        {disableTarget && (
+          <div>
+            <p className="text-gray-700 mb-4">
+              {disableTarget.active
+                ? "Êtes-vous sûr de vouloir désactiver cet album ? Il ne sera plus accessible aux clients."
+                : "Êtes-vous sûr de vouloir réactiver cet album ?"}
+            </p>
+            <div className="flex gap-3">
+              <button
+                className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg"
+                onClick={() => setDisableTarget(null)}
+                disabled={isWorking}
+              >
+                Annuler
+              </button>
+              <button
+                className="flex-1 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg"
+                onClick={() => handleDisableAlbum(disableTarget.id)}
+                disabled={isWorking}
+              >
+                {isWorking ? 'Traitement...' : disableTarget.active ? 'Désactiver' : 'Activer'}
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

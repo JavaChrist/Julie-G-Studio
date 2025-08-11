@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
-import { ZoomIn, Lock, Camera } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { ZoomIn, Lock, Camera, CheckSquare } from 'lucide-react';
 import ImageModal from './ImageModal';
 
 interface AlbumGalleryProps {
   images: string[];
   albumTitle: string;
+  selected?: string[];
+  onToggleSelect?: (imageUrl: string) => void;
 }
 
-const AlbumGallery: React.FC<AlbumGalleryProps> = ({ images, albumTitle }) => {
+const AlbumGallery: React.FC<AlbumGalleryProps> = ({ images, albumTitle, selected = [], onToggleSelect }) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const selectedSet = useMemo(() => new Set(selected), [selected]);
 
   const openModal = (imageSrc: string) => {
     setSelectedImage(imageSrc);
@@ -37,19 +40,36 @@ const AlbumGallery: React.FC<AlbumGalleryProps> = ({ images, albumTitle }) => {
         {images.map((image, index) => (
           <div
             key={index}
-            className="relative group cursor-pointer overflow-hidden rounded-lg bg-gray-200 aspect-square"
+            className={`relative group cursor-pointer overflow-hidden rounded-lg bg-gray-200 aspect-square ${selectedSet.has(image) ? 'ring-2 ring-primary-500' : ''}`}
             onClick={() => openModal(image)}
           >
             {/* Image */}
             <img
               src={image}
               alt={`Photo ${index + 1} de ${albumTitle}`}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 z-0"
               loading="lazy"
             />
 
+            {/* Checkbox de sélection (sans texte) */}
+            {onToggleSelect && (
+              <div
+                className="absolute top-2 right-2 z-10 bg-black/40 rounded-md p-1 backdrop-blur-sm"
+                onClick={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.stopPropagation()}
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedSet.has(image)}
+                  onChange={() => onToggleSelect(image)}
+                  className="w-5 h-5 accent-primary-500 cursor-pointer"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            )}
+
             {/* Overlay au hover */}
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-0 pointer-events-none">
               <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                 <ZoomIn className="w-5 h-5 text-white" />
               </div>

@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
@@ -26,15 +26,20 @@ if (missingVars.length > 0) {
   console.log('etc...');
 }
 
-// Vérification du Storage Bucket (format moderne .firebasestorage.app est OK)
-console.log('📦 Storage Bucket configuré:', requiredEnvVars.storageBucket);
+// Normalisation du Storage Bucket: Firebase attend <project-id>.appspot.com
+let normalizedStorageBucket = requiredEnvVars.storageBucket || '';
+if (normalizedStorageBucket.endsWith('.firebasestorage.app')) {
+  const projectId = requiredEnvVars.projectId || normalizedStorageBucket.split('.')[0];
+  normalizedStorageBucket = `${projectId}.appspot.com`;
+}
+console.log('📦 Storage Bucket configuré:', normalizedStorageBucket || requiredEnvVars.storageBucket);
 
 // Configuration Firebase avec valeurs par défaut pour éviter les erreurs
 const firebaseConfig = {
   apiKey: requiredEnvVars.apiKey || "demo-api-key",
   authDomain: requiredEnvVars.authDomain || "demo-project.firebaseapp.com",
   projectId: requiredEnvVars.projectId || "demo-project",
-  storageBucket: requiredEnvVars.storageBucket || "demo-project.appspot.com",
+  storageBucket: normalizedStorageBucket || "demo-project.appspot.com",
   messagingSenderId: requiredEnvVars.messagingSenderId || "123456789",
   appId: requiredEnvVars.appId || "1:123456789:web:demo"
 };
@@ -45,16 +50,23 @@ let db;
 let storage;
 
 try {
-  app = initializeApp(firebaseConfig);
+  app = getApps().length ? getApp() : initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
   storage = getStorage(app);
 } catch (error) {
   console.error('❌ Erreur d\'initialisation Firebase:', error);
-  // Créer des objets factices pour éviter les erreurs
-  auth = null as any;
-  db = null as any;
-  storage = null as any;
+  // Toujours tenter de récupérer l'app existante
+  try {
+    app = getApp();
+    auth = getAuth(app);
+    db = getFirestore(app);
+    storage = getStorage(app);
+  } catch (e) {
+    auth = null as any;
+    db = null as any;
+    storage = null as any;
+  }
 }
 
 export { auth, db, storage };

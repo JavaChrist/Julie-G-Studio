@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { X, Download } from 'lucide-react';
+import { ref as storageRef, getBytes } from 'firebase/storage';
+import { storage } from '../../firebase/firebaseConfig';
+import { saveAs } from 'file-saver';
 
 interface ImageModalProps {
   isOpen: boolean;
@@ -41,6 +44,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, imageSrc, imageAlt, onC
 
       // Extraire le nom de fichier depuis l'URL ou générer un nom
       let fileName = 'photo.jpg';
+      let mime = 'application/octet-stream';
       try {
         const url = new URL(imageSrc);
         const pathParts = url.pathname.split('/');
@@ -49,6 +53,10 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, imageSrc, imageAlt, onC
           const decodedPath = decodeURIComponent(lastPart);
           // Extraire juste le nom de fichier si c'est un chemin
           fileName = decodedPath.split('/').pop() || `photo-${Date.now()}.jpg`;
+          const lower = fileName.toLowerCase();
+          if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) mime = 'image/jpeg';
+          else if (lower.endsWith('.png')) mime = 'image/png';
+          else if (lower.endsWith('.webp')) mime = 'image/webp';
         } else {
           fileName = `photo-${Date.now()}.jpg`;
         }
@@ -56,37 +64,44 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, imageSrc, imageAlt, onC
         fileName = `photo-${Date.now()}.jpg`;
       }
 
-      // Méthode alternative sans fetch pour éviter CORS
-      // Créer un lien de téléchargement direct
-      const link = document.createElement('a');
-      link.href = imageSrc;
-      link.download = fileName;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
+      // Tenter via Firebase Storage si possible
+      const extractStoragePath = (url: string): string | null => {
+        try {
+          const parts = url.split('/o/');
+          if (parts.length > 1) {
+            const pathPart = parts[1].split('?')[0];
+            return decodeURIComponent(pathPart);
+          }
+          return null;
+        } catch {
+          return null;
+        }
+      };
 
-      // Ajouter des attributs pour forcer le téléchargement
-      link.style.display = 'none';
-      document.body.appendChild(link);
-
-      // Cliquer sur le lien pour déclencher le téléchargement
-      link.click();
-
-      // Nettoyer immédiatement
-      document.body.removeChild(link);
-
-      console.log('Téléchargement initié:', fileName);
+      try {
+        const path = extractStoragePath(imageSrc);
+        if (storage && path) {
+          const sRef = storageRef(storage, path);
+          const bytes = await getBytes(sRef);
+          const blob = new Blob([bytes], { type: mime });
+          saveAs(blob, fileName);
+        } else {
+          // Fallback via fetch
+          const res = await fetch(imageSrc, { mode: 'cors', cache: 'no-store' });
+          const buf = await res.arrayBuffer();
+          const blob = new Blob([buf], { type: mime });
+          saveAs(blob, fileName);
+        }
+      } catch (e) {
+        console.warn('Téléchargement binaire échoué, ouverture de l\'image:', e);
+        window.open(imageSrc, '_blank');
+      }
 
       // Réinitialiser immédiatement pour permettre la fermeture
       setIsDownloading(false);
 
     } catch (error) {
       console.error('Erreur lors du téléchargement:', error);
-
-      // Fallback: ouvrir l'image dans un nouvel onglet
-      const newWindow = window.open(imageSrc, '_blank');
-      if (!newWindow) {
-        alert('Impossible de télécharger. Autorisez les pop-ups ou cliquez droit sur l\'image → "Enregistrer sous"');
-      }
 
       // Réinitialiser l'état immédiatement en cas d'erreur
       setIsDownloading(false);

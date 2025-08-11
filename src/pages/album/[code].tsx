@@ -4,6 +4,10 @@ import { ArrowLeft, Download, Calendar, Lock } from 'lucide-react';
 import AlbumGallery from '../../components/ui/AlbumGallery';
 import ErrorModal from '../../components/ui/ErrorModal';
 import { getAlbumByCode, type Album } from '../../services/albumService';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+import { ref as storageRef, getBytes } from 'firebase/storage';
+import { storage } from '../../firebase/firebaseConfig';
 
 
 
@@ -16,6 +20,7 @@ const AlbumPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
+  const [selectedPhotos, setSelectedPhotos] = useState<string[]>([]);
 
   useEffect(() => {
     if (router.isReady && typeof code === 'string') {
@@ -68,9 +73,113 @@ const AlbumPage: React.FC = () => {
     router.push('/acces');
   };
 
-  const handleDownloadAll = async () => {
+  const toggleSelectPhoto = (url: string) => {
+    setSelectedPhotos(prev => prev.includes(url) ? prev.filter(u => u !== url) : [...prev, url]);
+  };
+
+  const handleClearSelection = () => setSelectedPhotos([]);
+
+  const handleSelectAll = () => {
+    if (!album?.photos) return;
+    if (selectedPhotos.length === album.photos.length) setSelectedPhotos([]);
+    else setSelectedPhotos([...album.photos]);
+  };
+
+  const downloadAsLinks = async (urls: string[]) => {
+    for (let i = 0; i < urls.length; i++) {
+      const photo = urls[i];
+      // Nom de fichier
+      let fileName = `${album?.title || 'album'}-photo-${i + 1}.jpg`;
+      let mime = 'application/octet-stream';
+      try {
+        const url = new URL(photo);
+        const lastPart = decodeURIComponent(url.pathname.split('/').pop() || '');
+        if (lastPart) fileName = `${album?.title || 'album'}-${lastPart}`;
+        const lower = lastPart.toLowerCase();
+        if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) mime = 'image/jpeg';
+        else if (lower.endsWith('.png')) mime = 'image/png';
+        else if (lower.endsWith('.webp')) mime = 'image/webp';
+      } catch { }
+
+      try {
+        const bytes = await fetchWithTimeout(photo, 45000);
+        const blob = new Blob([bytes], { type: mime });
+        saveAs(blob, fileName);
+      } catch (e) {
+        console.warn('Téléchargement direct échoué, tentative d\'ouverture:', e);
+        // dernier recours, ouvrir l'image
+        window.open(photo, '_blank');
+      }
+
+      if (i < urls.length - 1) await new Promise(r => setTimeout(r, 200));
+      setDownloadProgress(Math.round(((i + 1) / urls.length) * 100));
+    }
+  };
+
+  const extractStoragePath = (url: string): string | null => {
+    try {
+      // Support des URLs gs://bucket/path
+      if (url.startsWith('gs://')) {
+        const withoutScheme = url.replace('gs://', '');
+        const firstSlash = withoutScheme.indexOf('/')
+        if (firstSlash !== -1) {
+          return decodeURIComponent(withoutScheme.slice(firstSlash + 1));
+        }
+        return null;
+      }
+
+      const parts = url.split('/o/');
+      if (parts.length > 1) {
+        const pathPart = parts[1].split('?')[0];
+        return decodeURIComponent(pathPart);
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  };
+
+  const fetchWithTimeout = async (url: string, timeoutMs = 45000): Promise<ArrayBuffer> => {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      // Normaliser l'URL Firebase malformée (b=*.firebasestorage.app -> *.appspot.com)
+      try {
+        const u = new URL(url);
+        if (u.hostname === 'firebasestorage.googleapis.com') {
+          const b = u.pathname.split('/')[3]; // '/v0/b/{bucket}/o/...'
+          if (b && b.endsWith('.firebasestorage.app')) {
+            const fixedBucket = b.replace('.firebasestorage.app', '.appspot.com');
+            u.pathname = u.pathname.replace(`/b/${b}/`, `/b/${fixedBucket}/`);
+            url = u.toString();
+          }
+        }
+      } catch { }
+
+      // Essayer d'abord via Firebase Storage SDK si URL Firebase
+      const path = extractStoragePath(url);
+      if (storage && path) {
+        const sRef = storageRef(storage, path);
+        const bytesPromise = getBytes(sRef);
+        const timed = new Promise<ArrayBuffer>((_, reject) => setTimeout(() => reject(new Error('timeout')), timeoutMs));
+        return (await Promise.race([bytesPromise, timed])) as ArrayBuffer;
+      }
+
+      // Fallback via fetch CORS
+      const response = await fetch(url, { signal: controller.signal, mode: 'cors', cache: 'no-store', referrerPolicy: 'no-referrer' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const buf = await response.arrayBuffer();
+      return buf;
+    } finally {
+      clearTimeout(id);
+    }
+  };
+
+  const handleDownload = async (mode: 'all' | 'selected') => {
     if (!album || !album.photos || album.photos.length === 0) {
       alert('Aucune photo à télécharger dans cet album.');
+      setIsDownloading(false);
+      setDownloadProgress(0);
       return;
     }
 
@@ -78,73 +187,62 @@ const AlbumPage: React.FC = () => {
     setDownloadProgress(0);
 
     try {
-      console.log('Début du téléchargement de toutes les photos...');
-
-      // Informer l'utilisateur du processus
-      const userConfirm = confirm(
-        `Télécharger toutes les ${album.photos.length} photos ?\n\n` +
-        `⚠️ IMPORTANT: Votre navigateur va demander l'autorisation de télécharger plusieurs fichiers.\n` +
-        `Cliquez sur "AUTORISER" ou "ALLOW" quand cette popup apparaît.\n\n` +
-        `Continuer le téléchargement ?`
-      );
-
-      if (!userConfirm) {
+      const targetUrls = mode === 'all' ? album.photos : selectedPhotos;
+      if (targetUrls.length === 0) {
+        alert('Aucune photo sélectionnée.');
         setIsDownloading(false);
         setDownloadProgress(0);
         return;
       }
 
-      // Télécharger les photos une par une sans fetch (évite CORS)
-      for (let i = 0; i < album.photos.length; i++) {
-        const photo = album.photos[i];
+      console.log(`Début du téléchargement (${mode}) en ZIP...`);
+
+      const zip = new JSZip();
+      const folder = zip.folder((album.title || 'album').replace(/[^a-zA-Z0-9-_]/g, '_'))!;
+
+      let completed = 0;
+      let successCount = 0;
+      const total = targetUrls.length;
+
+      for (let i = 0; i < total; i++) {
+        const photoUrl = targetUrls[i];
+        let fileName = `${album.title || 'album'}-photo-${i + 1}.jpg`;
+        try {
+          const urlObj = new URL(photoUrl);
+          const last = decodeURIComponent(urlObj.pathname.split('/').pop() || '');
+          if (last) fileName = `${album.title || 'album'}-${last}`;
+        } catch {
+          // garder défaut
+        }
 
         try {
-          // Mettre à jour la progression
-          setDownloadProgress(Math.round(((i + 1) / album.photos.length) * 100));
-
-          // Générer un nom de fichier
-          let fileName = `${album.title || 'album'}-photo-${i + 1}.jpg`;
-          try {
-            const url = new URL(photo);
-            const pathParts = url.pathname.split('/');
-            const lastPart = pathParts[pathParts.length - 1];
-            if (lastPart && lastPart.includes('.')) {
-              const decodedPath = decodeURIComponent(lastPart);
-              const originalName = decodedPath.split('/').pop() || `photo-${i + 1}.jpg`;
-              fileName = `${album.title || 'album'}-${originalName}`;
-            }
-          } catch {
-            // Garder le nom par défaut
-          }
-
-          // Créer le lien de téléchargement direct (sans fetch)
-          const link = document.createElement('a');
-          link.href = photo;
-          link.download = fileName;
-          link.target = '_blank';
-          link.rel = 'noopener noreferrer';
-          link.style.display = 'none';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-
-          // Délai court entre les téléchargements
-          if (i < album.photos.length - 1) {
-            await new Promise(resolve => setTimeout(resolve, 300));
-          }
-
-        } catch (error) {
-          console.error(`Erreur téléchargement photo ${i + 1}:`, error);
-          // Continuer avec les autres photos même si une échoue
+          const data = await fetchWithTimeout(photoUrl, 45000);
+          folder.file(fileName, data);
+          successCount += 1;
+        } catch (err) {
+          console.warn(`Skip fichier ${i + 1}/${total}:`, err);
+        } finally {
+          completed += 1;
+          setDownloadProgress(Math.round((completed / total) * 100));
         }
       }
 
-      console.log('Téléchargement terminé pour toutes les photos disponibles');
-      alert(`Téléchargement de ${album.photos.length} photos initié avec succès ! Vérifiez votre dossier de téléchargements.`);
+      if (successCount > 0) {
+        const zipBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
+        const zipName = `${(album.title || 'album').replace(/[^a-zA-Z0-9-_]/g, '_')}${mode === 'selected' ? '-selection' : ''}.zip`;
+        saveAs(zipBlob, zipName);
+        console.log('ZIP généré et téléchargé');
+      } else {
+        console.warn('Aucun fichier ajouté au ZIP, bascule vers téléchargement individuel.');
+        await downloadAsLinks(targetUrls);
+      }
 
     } catch (error) {
       console.error('Erreur lors du téléchargement global:', error);
-      alert('Une erreur est survenue lors du téléchargement. Veuillez essayer de télécharger les photos une par une.');
+      alert('Une erreur est survenue lors du téléchargement. Tentative de téléchargement individuel.');
+      // Fallback sur liens directs
+      const targetUrls = mode === 'all' ? (album?.photos || []) : selectedPhotos;
+      if (targetUrls.length > 0) await downloadAsLinks(targetUrls);
     } finally {
       setIsDownloading(false);
       setDownloadProgress(0);
@@ -235,35 +333,74 @@ const AlbumPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Bouton téléchargement global */}
-              <button
-                onClick={handleDownloadAll}
-                disabled={isDownloading}
-                className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-colors duration-300 font-medium whitespace-nowrap ${isDownloading
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-primary-500 hover:bg-primary-600'
-                  } text-white`}
-              >
-                {isDownloading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span className="hidden sm:inline">{downloadProgress}%</span>
-                    <span className="sm:hidden">{downloadProgress}%</span>
-                  </>
-                ) : (
-                  <>
+              {/* Actions téléchargement */}
+              <div className="flex flex-col items-stretch gap-2 w-full sm:w-auto">
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleDownload('all')}
+                    disabled={isDownloading}
+                    className={`flex items-center space-x-2 px-4 py-3 rounded-lg transition-colors duration-300 font-medium whitespace-nowrap ${isDownloading
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-primary-500 hover:bg-primary-600'
+                      } text-white`}
+                  >
+                    {isDownloading ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span className="hidden sm:inline">{downloadProgress}%</span>
+                        <span className="sm:hidden">{downloadProgress}%</span>
+                      </>
+                    ) : (
+                      <>
+                        <Download className="w-5 h-5" />
+                        <span className="hidden sm:inline">Tout</span>
+                        <span className="sm:hidden">Tout</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    onClick={() => handleDownload('selected')}
+                    disabled={isDownloading || selectedPhotos.length === 0}
+                    className={`flex items-center space-x-2 px-4 py-3 rounded-lg transition-colors duration-300 font-medium whitespace-nowrap ${isDownloading || selectedPhotos.length === 0
+                      ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                      : 'bg-primary-500 hover:bg-primary-600 text-white'
+                      }`}
+                    title={selectedPhotos.length === 0 ? 'Sélectionnez des photos' : `Télécharger ${selectedPhotos.length} photo(s)`}
+                  >
                     <Download className="w-5 h-5" />
-                    <span className="hidden sm:inline">Télécharger tout</span>
-                    <span className="sm:hidden">Tout</span>
-                  </>
-                )}
-              </button>
+                    <span className="hidden sm:inline">Sélection</span>
+                    <span className="sm:hidden">Sélect.</span>
+                  </button>
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <button
+                    onClick={handleSelectAll}
+                    className="px-3 py-2 text-sm rounded-lg border border-gray-300 hover:bg-gray-100"
+                  >
+                    {selectedPhotos.length === album.photos.length ? 'Tout désélectionner' : 'Tout sélectionner'}
+                  </button>
+                  {selectedPhotos.length > 0 && (
+                    <button
+                      onClick={handleClearSelection}
+                      className="px-3 py-2 text-sm rounded-lg border border-gray-300 hover:bg-gray-100"
+                    >
+                      Effacer sélection
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Galerie de photos */}
-        <AlbumGallery images={album.photos} albumTitle={album.title} />
+        {/* Galerie de photos avec sélection */}
+        <AlbumGallery
+          images={album.photos}
+          albumTitle={album.title}
+          selected={selectedPhotos}
+          onToggleSelect={toggleSelectPhoto}
+        />
 
         {/* Note de sécurité */}
         <div className="mt-12 bg-primary-50 border border-primary-200 rounded-lg p-6">

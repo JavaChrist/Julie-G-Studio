@@ -1,20 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Calendar, Clock, Trash2, RefreshCw, Image as ImageIcon, AlertTriangle, Power } from 'lucide-react';
 import { Album } from '../../types';
 
 interface AdminAlbumCardProps {
   album: Album;
-  onExtend: (albumId: string) => Promise<void>;
-  onDelete: (albumId: string) => Promise<void>;
-  onDisable?: (albumId: string) => Promise<void>;
+  onOpenExtend: (album: Album) => void;
+  onOpenDelete: (album: Album) => void;
+  onOpenDisable?: (album: Album) => void;
 }
 
-const AdminAlbumCard: React.FC<AdminAlbumCardProps> = ({ album, onExtend, onDelete, onDisable }) => {
-  const [isExtending, setIsExtending] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isDisabling, setIsDisabling] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [showDisableConfirm, setShowDisableConfirm] = useState(false);
+const AdminAlbumCard: React.FC<AdminAlbumCardProps> = ({ album, onOpenExtend, onOpenDelete, onOpenDisable }) => {
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
@@ -49,40 +44,8 @@ const AdminAlbumCard: React.FC<AdminAlbumCardProps> = ({ album, onExtend, onDele
     return `${daysRemaining} jours restants`;
   };
 
-  const handleExtend = async () => {
-    setIsExtending(true);
-    try {
-      await onExtend(album.id);
-    } catch (error) {
-      console.error('Erreur lors de la prolongation:', error);
-    } finally {
-      setIsExtending(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    try {
-      await onDelete(album.id);
-      setShowDeleteConfirm(false);
-    } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
-  const handleDisable = async () => {
-    if (!onDisable) return;
-    setIsDisabling(true);
-    try {
-      await onDisable(album.id);
-      setShowDisableConfirm(false);
-    } catch (error) {
-      console.error('Erreur lors de la désactivation:', error);
-    } finally {
-      setIsDisabling(false);
-    }
+  const handleExtend = () => {
+    onOpenExtend(album);
   };
 
   const daysRemaining = getDaysRemaining(album.expireAt);
@@ -156,48 +119,27 @@ const AdminAlbumCard: React.FC<AdminAlbumCardProps> = ({ album, onExtend, onDele
           {/* Bouton Prolonger */}
           <button
             onClick={handleExtend}
-            disabled={isExtending || isDeleting || isDisabling}
-            className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-400 text-white rounded-lg transition-colors duration-300 font-medium text-sm"
+            className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-300 font-medium text-sm"
           >
-            {isExtending ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                Prolongation...
-              </>
-            ) : (
-              <>
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Prolonger
-              </>
-            )}
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Prolonger
           </button>
 
           {/* Bouton Désactiver/Activer */}
-          {onDisable && (
+          {onOpenDisable && (
             <button
-              onClick={() => setShowDisableConfirm(true)}
-              disabled={isExtending || isDeleting || isDisabling}
-              className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-400 text-white rounded-lg transition-colors duration-300 font-medium text-sm"
+              onClick={() => onOpenDisable(album)}
+              className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-colors duration-300 font-medium text-sm"
             >
-              {isDisabling ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                  Action...
-                </>
-              ) : (
-                <>
-                  <Power className="w-4 h-4 mr-2" />
-                  {album.active ? 'Désactiver' : 'Activer'}
-                </>
-              )}
+              <Power className="w-4 h-4 mr-2" />
+              {album.active ? 'Désactiver' : 'Activer'}
             </button>
           )}
 
           {/* Bouton Supprimer */}
           <button
-            onClick={() => setShowDeleteConfirm(true)}
-            disabled={isExtending || isDeleting || isDisabling}
-            className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-red-500 hover:bg-red-600 disabled:bg-red-400 text-white rounded-lg transition-colors duration-300 font-medium text-sm"
+            onClick={() => onOpenDelete(album)}
+            className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-300 font-medium text-sm"
           >
             <Trash2 className="w-4 h-4 mr-2" />
             Supprimer
@@ -219,127 +161,7 @@ const AdminAlbumCard: React.FC<AdminAlbumCardProps> = ({ album, onExtend, onDele
         )}
       </div>
 
-      {/* Modal de confirmation de suppression */}
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex min-h-screen items-center justify-center p-4">
-            {/* Overlay */}
-            <div
-              className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
-              onClick={() => setShowDeleteConfirm(false)}
-            />
-
-            {/* Modal */}
-            <div className="relative w-full max-w-md bg-gray-800 rounded-lg shadow-xl border border-gray-700">
-              <div className="p-6">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="w-10 h-10 bg-red-500/10 rounded-full flex items-center justify-center">
-                    <AlertTriangle className="w-5 h-5 text-red-400" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-white">
-                    Confirmer la suppression
-                  </h3>
-                </div>
-
-                <p className="text-gray-300 mb-2">
-                  Êtes-vous sûr de vouloir supprimer cet album ?
-                </p>
-                <p className="text-sm text-gray-400 mb-6">
-                  <strong>{album.title}</strong> - Cette action est irréversible et supprimera toutes les photos associées.
-                </p>
-
-                <div className="flex space-x-3">
-                  <button
-                    onClick={() => setShowDeleteConfirm(false)}
-                    disabled={isDeleting}
-                    className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors duration-300"
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    onClick={handleDelete}
-                    disabled={isDeleting}
-                    className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-red-500 hover:bg-red-600 disabled:bg-red-400 text-white rounded-lg transition-colors duration-300"
-                  >
-                    {isDeleting ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                        Suppression...
-                      </>
-                    ) : (
-                      'Supprimer définitivement'
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal de confirmation de désactivation */}
-      {showDisableConfirm && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex min-h-screen items-center justify-center p-4">
-            {/* Overlay */}
-            <div
-              className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
-              onClick={() => setShowDisableConfirm(false)}
-            />
-
-            {/* Modal */}
-            <div className="relative w-full max-w-md bg-gray-800 rounded-lg shadow-xl border border-gray-700">
-              <div className="p-6">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="w-10 h-10 bg-yellow-500/10 rounded-full flex items-center justify-center">
-                    <Power className="w-5 h-5 text-yellow-400" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-white">
-                    {album.active ? 'Désactiver' : 'Activer'} l'album
-                  </h3>
-                </div>
-
-                <p className="text-gray-300 mb-2">
-                  {album.active
-                    ? 'Êtes-vous sûr de vouloir désactiver cet album ?'
-                    : 'Êtes-vous sûr de vouloir réactiver cet album ?'
-                  }
-                </p>
-                <p className="text-sm text-gray-400 mb-6">
-                  <strong>{album.title}</strong> - {album.active
-                    ? 'L\'album ne sera plus accessible aux clients mais les données seront conservées.'
-                    : 'L\'album redeviendra accessible aux clients (si non expiré).'
-                  }
-                </p>
-
-                <div className="flex space-x-3">
-                  <button
-                    onClick={() => setShowDisableConfirm(false)}
-                    disabled={isDisabling}
-                    className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors duration-300"
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    onClick={handleDisable}
-                    disabled={isDisabling}
-                    className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-400 text-white rounded-lg transition-colors duration-300"
-                  >
-                    {isDisabling ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                        {album.active ? 'Désactivation...' : 'Activation...'}
-                      </>
-                    ) : (
-                      album.active ? 'Désactiver' : 'Activer'
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modales gérées par le parent */}
     </>
   );
 };
