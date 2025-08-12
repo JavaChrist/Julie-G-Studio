@@ -1,4 +1,4 @@
-import { collection, getDocs, doc, updateDoc, deleteDoc, Timestamp } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, deleteDoc, getDoc } from "firebase/firestore";
 import { ref, deleteObject, listAll } from "firebase/storage";
 import { db, storage, auth } from "../firebase/firebaseConfig";
 import { Album, AdminStats } from "../types";
@@ -250,4 +250,69 @@ export const getAdminStats = async (): Promise<AdminStats> => {
       albums: []
     };
   }
-}; 
+};
+
+/**
+ * Ajoute des URLs de photos à un album (append dans Firestore)
+ */
+export const appendAlbumPhotos = async (albumId: string, photoUrls: string[]): Promise<boolean> => {
+  try {
+    if (!db) return false;
+    if (!photoUrls || photoUrls.length === 0) return true;
+
+    const albumRef = doc(db, "albums", albumId);
+    const snap = await getDoc(albumRef);
+    if (!snap.exists()) return false;
+
+    const current = (snap.data().photos || []) as string[];
+    const updated = [...current, ...photoUrls];
+
+    await updateDoc(albumRef, {
+      photos: updated,
+      updatedAt: new Date().toISOString(),
+    });
+    return true;
+  } catch (e) {
+    console.error('Erreur appendAlbumPhotos:', e);
+    return false;
+  }
+};
+
+/**
+ * Supprime une ou plusieurs photos d'un album (Storage + Firestore)
+ */
+export const deleteAlbumPhotos = async (albumId: string, photoUrls: string[]): Promise<boolean> => {
+  try {
+    if (!db || !storage) return false;
+    const albumRef = doc(db, "albums", albumId);
+    const snap = await getDoc(albumRef);
+    if (!snap.exists()) return false;
+
+    // Supprimer dans Storage
+    for (const url of photoUrls) {
+      try {
+        const path = extractStoragePath(url);
+        if (path) {
+          const imageRef = ref(storage, path);
+          await deleteObject(imageRef);
+        }
+      } catch (err) {
+        console.warn('Suppression image échouée (ignorée):', url, err);
+      }
+    }
+
+    // Mettre à jour Firestore
+    const current = (snap.data().photos || []) as string[];
+    const toDelete = new Set(photoUrls);
+    const updated = current.filter(u => !toDelete.has(u));
+    await updateDoc(albumRef, {
+      photos: updated,
+      updatedAt: new Date().toISOString(),
+    });
+
+    return true;
+  } catch (e) {
+    console.error('Erreur deleteAlbumPhotos:', e);
+    return false;
+  }
+};

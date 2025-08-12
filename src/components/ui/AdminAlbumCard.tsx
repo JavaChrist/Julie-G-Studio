@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Clock, Trash2, RefreshCw, Image as ImageIcon, AlertTriangle, Power } from 'lucide-react';
+import { Calendar, Clock, Trash2, RefreshCw, Image as ImageIcon, AlertTriangle, Power, Edit } from 'lucide-react';
 import { Album } from '../../types';
 
 interface AdminAlbumCardProps {
@@ -7,9 +7,10 @@ interface AdminAlbumCardProps {
   onOpenExtend: (album: Album) => void;
   onOpenDelete: (album: Album) => void;
   onOpenDisable?: (album: Album) => void;
+  onOpenEdit?: (album: Album) => void;
 }
 
-const AdminAlbumCard: React.FC<AdminAlbumCardProps> = ({ album, onOpenExtend, onOpenDelete, onOpenDisable }) => {
+const AdminAlbumCard: React.FC<AdminAlbumCardProps> = ({ album, onOpenExtend, onOpenDelete, onOpenDisable, onOpenEdit }) => {
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
@@ -144,6 +145,17 @@ const AdminAlbumCard: React.FC<AdminAlbumCardProps> = ({ album, onOpenExtend, on
             <Trash2 className="w-4 h-4 mr-2" />
             Supprimer
           </button>
+
+          {/* Bouton Modifier */}
+          {onOpenEdit && (
+            <button
+              onClick={() => onOpenEdit(album)}
+              className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors duration-300 font-medium text-sm"
+            >
+              <Edit className="w-4 h-4 mr-2" />
+              Modifier
+            </button>
+          )}
         </div>
 
         {/* Avertissements */}

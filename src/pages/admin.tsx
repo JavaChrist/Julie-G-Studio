@@ -137,6 +137,10 @@ const AdminDashboard: React.FC = () => {
     router.push('/admin/ajouter');
   };
 
+  const handleOpenEdit = (albumId: string) => {
+    router.push(`/admin/editer/${albumId}`);
+  };
+
   const handleLogout = async () => {
     try {
       await signOut();
@@ -318,6 +322,7 @@ const AdminDashboard: React.FC = () => {
                   onOpenExtend={(a) => setExtendTarget(a)}
                   onOpenDelete={(a) => setDeleteTarget(a)}
                   onOpenDisable={(a) => setDisableTarget(a)}
+                  onOpenEdit={(a) => handleOpenEdit(a.id)}
                 />
               ))}
             </div>
