@@ -79,27 +79,24 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmitSuccess }) => {
     setIsSubmitting(true);
 
     try {
-      // Simulation d'envoi (à remplacer par l'API plus tard)
-      console.log('Message envoyé:', {
-        nom: formData.name,
-        email: formData.email,
-        message: formData.message,
-        timestamp: new Date().toISOString()
+      const resp = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+        }),
       });
+      if (!resp.ok) throw new Error('Échec de l\'envoi');
 
-      // Simulation d'un délai d'envoi
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Réinitialiser le formulaire
+      // Réinitialiser
       setFormData({ name: '', email: '', message: '' });
       setErrors({});
-
-      // Appeler la fonction de succès
       onSubmitSuccess();
-
     } catch (error) {
       console.error('Erreur lors de l\'envoi:', error);
-      // TODO: Gérer les erreurs d'envoi
+      alert("Impossible d'envoyer le message pour le moment. Merci de réessayer plus tard.");
     } finally {
       setIsSubmitting(false);
     }
