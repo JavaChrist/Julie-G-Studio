@@ -76,9 +76,21 @@ const AdminAlbumCard: React.FC<AdminAlbumCardProps> = ({ album, onOpenExtend, on
             </div>
           </div>
 
-          {/* Badge de statut */}
-          <div className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor()}`}>
-            {getStatusText()}
+          {/* Badge de statut + Modifier */}
+          <div className="flex items-center gap-2">
+            <div className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor()}`}>
+              {getStatusText()}
+            </div>
+            {onOpenEdit && (
+              <button
+                onClick={() => onOpenEdit(album)}
+                className="inline-flex items-center px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded-md transition-colors duration-300 text-xs font-medium"
+                title="Modifier l'album"
+              >
+                <Edit className="w-3.5 h-3.5 mr-1" />
+                Modifier
+              </button>
+            )}
           </div>
         </div>
 
@@ -146,16 +158,7 @@ const AdminAlbumCard: React.FC<AdminAlbumCardProps> = ({ album, onOpenExtend, on
             Supprimer
           </button>
 
-          {/* Bouton Modifier */}
-          {onOpenEdit && (
-            <button
-              onClick={() => onOpenEdit(album)}
-              className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors duration-300 font-medium text-sm"
-            >
-              <Edit className="w-4 h-4 mr-2" />
-              Modifier
-            </button>
-          )}
+
         </div>
 
         {/* Avertissements */}

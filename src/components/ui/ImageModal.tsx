@@ -79,22 +79,31 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, imageSrc, imageAlt, onC
       };
 
       try {
-        const path = extractStoragePath(imageSrc);
-        if (storage && path) {
-          const sRef = storageRef(storage, path);
-          const bytes = await getBytes(sRef);
-          const blob = new Blob([bytes], { type: mime });
-          saveAs(blob, fileName);
-        } else {
-          // Fallback via fetch
-          const res = await fetch(imageSrc, { mode: 'cors', cache: 'no-store' });
-          const buf = await res.arrayBuffer();
-          const blob = new Blob([buf], { type: mime });
-          saveAs(blob, fileName);
-        }
+        // Proxy via API pour contourner CORS en prod
+        const apiUrl = `/api/download-one?url=${encodeURIComponent(imageSrc)}&filename=${encodeURIComponent(fileName)}`;
+        const resp = await fetch(apiUrl);
+        if (!resp.ok) throw new Error('API download-one error');
+        const blob = await resp.blob();
+        saveAs(blob, fileName);
       } catch (e) {
-        console.warn('Téléchargement binaire échoué, ouverture de l\'image:', e);
-        window.open(imageSrc, '_blank');
+        console.warn('API proxy échouée, tentative binaire directe:', e);
+        try {
+          const path = extractStoragePath(imageSrc);
+          if (storage && path) {
+            const sRef = storageRef(storage, path);
+            const bytes = await getBytes(sRef);
+            const blob = new Blob([bytes], { type: mime });
+            saveAs(blob, fileName);
+          } else {
+            const res = await fetch(imageSrc, { mode: 'cors', cache: 'no-store' });
+            const buf = await res.arrayBuffer();
+            const blob = new Blob([buf], { type: mime });
+            saveAs(blob, fileName);
+          }
+        } catch (err) {
+          console.warn('Téléchargement direct échoué, ouverture de l\'image:', err);
+          window.open(imageSrc, '_blank');
+        }
       }
 
       // Réinitialiser immédiatement pour permettre la fermeture
