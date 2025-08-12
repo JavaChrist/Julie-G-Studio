@@ -340,9 +340,16 @@ const AdminDashboard: React.FC = () => {
       >
         {extendTarget && (
           <div>
-            <p className="text-gray-700 mb-4">
-              Voulez-vous prolonger l'album <strong>{extendTarget.title}</strong> de 30 jours et le réactiver si besoin ?
-            </p>
+            <div className="mb-4 text-sm text-gray-600 space-y-2">
+              <p>
+                Vous êtes sur le point de <span className="font-semibold text-gray-900">prolonger</span> l'album
+                <span className="font-semibold text-gray-900"> {extendTarget.title}</span> de <span className="font-semibold text-gray-900">30 jours</span>.
+              </p>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>L'album sera <span className="font-medium">réactivé</span> s'il était désactivé.</li>
+                <li>La nouvelle date d'expiration sera recalculée à partir d'aujourd'hui.</li>
+              </ul>
+            </div>
             <div className="flex gap-3">
               <button
                 className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg"
@@ -356,7 +363,7 @@ const AdminDashboard: React.FC = () => {
                 onClick={() => handleExtendAlbum(extendTarget.id)}
                 disabled={isWorking}
               >
-                {isWorking ? 'Traitement...' : 'Confirmer'}
+                {isWorking ? 'Traitement...' : 'Prolonger de 30 jours'}
               </button>
             </div>
           </div>
@@ -371,9 +378,16 @@ const AdminDashboard: React.FC = () => {
       >
         {deleteTarget && (
           <div>
-            <p className="text-gray-700 mb-4">
-              Êtes-vous sûr de vouloir supprimer l'album <strong>{deleteTarget.title}</strong> ? Cette action est irréversible.
-            </p>
+            <div className="mb-4 text-sm text-gray-600 space-y-2">
+              <p>
+                Cette action va <span className="font-semibold text-red-700">définitivement supprimer</span> l'album
+                <span className="font-semibold text-gray-900"> {deleteTarget.title}</span>.
+              </p>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>Toutes les photos liées seront <span className="font-medium">supprimées du stockage</span>.</li>
+                <li>Cette action est <span className="font-medium">irréversible</span>.</li>
+              </ul>
+            </div>
             <div className="flex gap-3">
               <button
                 className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg"
@@ -402,11 +416,28 @@ const AdminDashboard: React.FC = () => {
       >
         {disableTarget && (
           <div>
-            <p className="text-gray-700 mb-4">
-              {disableTarget.active
-                ? "Êtes-vous sûr de vouloir désactiver cet album ? Il ne sera plus accessible aux clients."
-                : "Êtes-vous sûr de vouloir réactiver cet album ?"}
-            </p>
+            <div className="mb-4 text-sm text-gray-600 space-y-2">
+              {disableTarget.active ? (
+                <>
+                  <p>
+                    Vous êtes sur le point de <span className="font-semibold text-gray-900">désactiver</span> cet album.
+                  </p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    <li>L'album ne sera plus accessible aux clients.</li>
+                    <li>Vous pourrez le réactiver à tout moment.</li>
+                  </ul>
+                </>
+              ) : (
+                <>
+                  <p>
+                    Vous êtes sur le point de <span className="font-semibold text-gray-900">réactiver</span> cet album.
+                  </p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    <li>L'accès client sera de nouveau possible (si l'album n'est pas expiré).</li>
+                  </ul>
+                </>
+              )}
+            </div>
             <div className="flex gap-3">
               <button
                 className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg"
@@ -420,7 +451,7 @@ const AdminDashboard: React.FC = () => {
                 onClick={() => handleDisableAlbum(disableTarget.id)}
                 disabled={isWorking}
               >
-                {isWorking ? 'Traitement...' : disableTarget.active ? 'Désactiver' : 'Activer'}
+                {isWorking ? 'Traitement...' : disableTarget.active ? 'Désactiver l\'album' : 'Activer l\'album'}
               </button>
             </div>
           </div>
