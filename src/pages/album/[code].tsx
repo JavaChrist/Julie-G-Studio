@@ -195,47 +195,17 @@ const AlbumPage: React.FC = () => {
         return;
       }
 
-      console.log(`Début du téléchargement (${mode}) en ZIP...`);
+      console.log(`Début du téléchargement (${mode}) via serveur (ZIP)...`);
 
-      const zip = new JSZip();
-      const folder = zip.folder((album.title || 'album').replace(/[^a-zA-Z0-9-_]/g, '_'))!;
-
-      let completed = 0;
-      let successCount = 0;
-      const total = targetUrls.length;
-
-      for (let i = 0; i < total; i++) {
-        const photoUrl = targetUrls[i];
-        let fileName = `${album.title || 'album'}-photo-${i + 1}.jpg`;
-        try {
-          const urlObj = new URL(photoUrl);
-          const last = decodeURIComponent(urlObj.pathname.split('/').pop() || '');
-          if (last) fileName = `${album.title || 'album'}-${last}`;
-        } catch {
-          // garder défaut
-        }
-
-        try {
-          const data = await fetchWithTimeout(photoUrl, 45000);
-          folder.file(fileName, data);
-          successCount += 1;
-        } catch (err) {
-          console.warn(`Skip fichier ${i + 1}/${total}:`, err);
-        } finally {
-          completed += 1;
-          setDownloadProgress(Math.round((completed / total) * 100));
-        }
-      }
-
-      if (successCount > 0) {
-        const zipBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
-        const zipName = `${(album.title || 'album').replace(/[^a-zA-Z0-9-_]/g, '_')}${mode === 'selected' ? '-selection' : ''}.zip`;
-        saveAs(zipBlob, zipName);
-        console.log('ZIP généré et téléchargé');
-      } else {
-        console.warn('Aucun fichier ajouté au ZIP, bascule vers téléchargement individuel.');
-        await downloadAsLinks(targetUrls);
-      }
+      const resp = await fetch('/api/download-zip', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: album.title, urls: targetUrls }),
+      });
+      if (!resp.ok) throw new Error('API ZIP erreur');
+      const blob = await resp.blob();
+      const zipName = `${(album.title || 'album').replace(/[^a-zA-Z0-9-_]/g, '_')}${mode === 'selected' ? '-selection' : ''}.zip`;
+      saveAs(blob, zipName);
 
     } catch (error) {
       console.error('Erreur lors du téléchargement global:', error);
