@@ -336,17 +336,17 @@ const AdminDashboard: React.FC = () => {
       <Modal
         isOpen={!!extendTarget}
         onClose={() => (!isWorking ? setExtendTarget(null) : undefined)}
-        title="Prolonger l'album"
+        title={<span className="text-blue-400">Prolonger l'album</span> as unknown as string}
       >
         {extendTarget && (
           <div>
-            <div className="mb-4 text-sm text-gray-600 space-y-2">
+            <div className="mb-4 text-sm text-white space-y-2">
               <p>
-                Vous êtes sur le point de <span className="font-semibold text-gray-900">prolonger</span> l'album
-                <span className="font-semibold text-gray-900"> {extendTarget.title}</span> de <span className="font-semibold text-gray-900">30 jours</span>.
+                Vous êtes sur le point de <span className="font-semibold text-white">prolonger</span> l'album
+                <span className="font-semibold text-white"> {extendTarget.title}</span> de <span className="font-semibold text-white">30 jours</span>.
               </p>
-              <ul className="list-disc pl-5 space-y-1">
-                <li>L'album sera <span className="font-medium">réactivé</span> s'il était désactivé.</li>
+              <ul className="list-disc pl-5 space-y-1 text-white/90">
+                <li>L'album sera <span className="font-medium text-white">réactivé</span> s'il était désactivé.</li>
                 <li>La nouvelle date d'expiration sera recalculée à partir d'aujourd'hui.</li>
               </ul>
             </div>
@@ -374,18 +374,18 @@ const AdminDashboard: React.FC = () => {
       <Modal
         isOpen={!!deleteTarget}
         onClose={() => (!isWorking ? setDeleteTarget(null) : undefined)}
-        title="Supprimer l'album"
+        title={<span className="text-red-400">Supprimer l'album</span> as unknown as string}
       >
         {deleteTarget && (
           <div>
-            <div className="mb-4 text-sm text-gray-600 space-y-2">
+            <div className="mb-4 text-sm text-white space-y-2">
               <p>
-                Cette action va <span className="font-semibold text-red-700">définitivement supprimer</span> l'album
-                <span className="font-semibold text-gray-900"> {deleteTarget.title}</span>.
+                Cette action va <span className="font-semibold text-red-300">définitivement supprimer</span> l'album
+                <span className="font-semibold text-white"> {deleteTarget.title}</span>.
               </p>
-              <ul className="list-disc pl-5 space-y-1">
-                <li>Toutes les photos liées seront <span className="font-medium">supprimées du stockage</span>.</li>
-                <li>Cette action est <span className="font-medium">irréversible</span>.</li>
+              <ul className="list-disc pl-5 space-y-1 text-white/90">
+                <li>Toutes les photos liées seront <span className="font-medium text-white">supprimées du stockage</span>.</li>
+                <li>Cette action est <span className="font-medium text-white">irréversible</span>.</li>
               </ul>
             </div>
             <div className="flex gap-3">
@@ -412,17 +412,17 @@ const AdminDashboard: React.FC = () => {
       <Modal
         isOpen={!!disableTarget}
         onClose={() => (!isWorking ? setDisableTarget(null) : undefined)}
-        title={disableTarget?.active ? "Désactiver l'album" : "Activer l'album"}
+        title={(disableTarget?.active ? <span className="text-yellow-400">Désactiver l'album</span> : <span className="text-green-400">Activer l'album</span>) as unknown as string}
       >
         {disableTarget && (
           <div>
-            <div className="mb-4 text-sm text-gray-600 space-y-2">
+            <div className="mb-4 text-sm text-white space-y-2">
               {disableTarget.active ? (
                 <>
                   <p>
-                    Vous êtes sur le point de <span className="font-semibold text-gray-900">désactiver</span> cet album.
+                    Vous êtes sur le point de <span className="font-semibold text-white">désactiver</span> cet album.
                   </p>
-                  <ul className="list-disc pl-5 space-y-1">
+                  <ul className="list-disc pl-5 space-y-1 text-white/90">
                     <li>L'album ne sera plus accessible aux clients.</li>
                     <li>Vous pourrez le réactiver à tout moment.</li>
                   </ul>
@@ -430,9 +430,9 @@ const AdminDashboard: React.FC = () => {
               ) : (
                 <>
                   <p>
-                    Vous êtes sur le point de <span className="font-semibold text-gray-900">réactiver</span> cet album.
+                    Vous êtes sur le point de <span className="font-semibold text-white">réactiver</span> cet album.
                   </p>
-                  <ul className="list-disc pl-5 space-y-1">
+                  <ul className="list-disc pl-5 space-y-1 text-white/90">
                     <li>L'accès client sera de nouveau possible (si l'album n'est pas expiré).</li>
                   </ul>
                 </>
