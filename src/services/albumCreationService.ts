@@ -224,15 +224,15 @@ export const createAlbum = async (
  */
 export const validateImageFiles = (files: File[]): string[] => {
   const errors: string[] = [];
-  const maxFileSize = 10 * 1024 * 1024; // 10MB
+  const maxFileSize = 50 * 1024 * 1024; // 50MB
   const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
   if (files.length === 0) {
     errors.push('Au moins une image est requise');
   }
 
-  if (files.length > 50) {
-    errors.push('Maximum 50 images par album');
+  if (files.length > 200) {
+    errors.push('Maximum 200 images par album');
   }
 
   files.forEach((file, index) => {
@@ -241,7 +241,7 @@ export const validateImageFiles = (files: File[]): string[] => {
     }
 
     if (file.size > maxFileSize) {
-      errors.push(`Image ${index + 1}: Taille trop importante (max 10MB)`);
+      errors.push(`Image ${index + 1}: Taille trop importante (max 50MB)`);
     }
   });
 
