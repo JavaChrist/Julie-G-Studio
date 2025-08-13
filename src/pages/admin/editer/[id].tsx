@@ -16,14 +16,19 @@ const AdminEditAlbumPage: React.FC = () => {
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    if (router.isReady && typeof id === 'string') {
-      (async () => {
+    if (!router.isReady) return;
+    if (typeof id !== 'string') return;
+    let isCancelled = false;
+    (async () => {
+      try {
         setLoading(true);
         const data = await getAlbumByCode(id);
-        setAlbum(data);
-        setLoading(false);
-      })();
-    }
+        if (!isCancelled) setAlbum(data);
+      } finally {
+        if (!isCancelled) setLoading(false);
+      }
+    })();
+    return () => { isCancelled = true; };
   }, [router.isReady, id]);
 
   const toggleSelect = (url: string) => {
@@ -110,7 +115,7 @@ const AdminEditAlbumPage: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {album.photos.map((url, idx) => (
             <div key={idx} className={`relative rounded-lg overflow-hidden border ${selected.has(url) ? 'border-primary-500' : 'border-gray-200'}`}>
-              <img src={url} alt={`photo-${idx + 1}`} className="w-full h-40 object-cover" onClick={() => toggleSelect(url)} />
+              <img src={url} alt={`photo-${idx + 1}`} className="w-full h-40 object-cover" loading="lazy" decoding="async" onClick={() => toggleSelect(url)} />
               <input type="checkbox" className="absolute top-2 right-2 w-5 h-5 accent-primary-500" checked={selected.has(url)} onChange={() => toggleSelect(url)} />
             </div>
           ))}
