@@ -11,6 +11,7 @@ export default function Document() {
 
         {/* PWA iOS spécifique */}
         <meta name="apple-touch-fullscreen" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
@@ -31,9 +32,6 @@ export default function Document() {
         <meta name="twitter:description" content="Photographe d'émotions en Normandie - Mariage, Grossesse, Nouveau-né, Famille" />
         <meta name="twitter:image" content="/logo512.png" />
 
-        {/* Preload critical assets */}
-        <link rel="preload" href="/SignatureJulieBlanc.png" as="image" />
-        <link rel="preload" href="/logo192.png" as="image" />
       </Head>
       <body>
         <Main />

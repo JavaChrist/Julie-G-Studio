@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const user = process.env.SMTP_USER;
     const pass = process.env.SMTP_PASS;
     const to = process.env.MAIL_TO || user;
-    const from = process.env.MAIL_FROM || user || 'no-reply@julie-g-studio.com';
+    const from = process.env.MAIL_FROM || user || 'contact@jg-photographie.fr';
 
     if (!host || !user || !pass) {
       return res.status(500).json({ error: 'SMTP non configuré côté serveur' });

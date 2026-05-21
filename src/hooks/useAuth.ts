@@ -8,7 +8,7 @@ import {
   sendPasswordResetEmail,
   updateProfile,
 } from 'firebase/auth';
-import { auth } from '../../firebase/firebaseConfig';
+import { auth } from '../firebase/firebaseConfig';
 import { AuthContextType } from '../types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

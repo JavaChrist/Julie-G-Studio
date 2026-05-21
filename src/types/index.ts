@@ -43,6 +43,8 @@ export interface InputProps {
   autoComplete?: string;
   name?: string;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  /** Si true et type === 'password', affiche un bouton œil pour basculer la visibilité. */
+  togglePassword?: boolean;
 }
 
 // Interface principale pour les albums
@@ -55,6 +57,7 @@ export interface Album {
   active: boolean;
   allowDownload: boolean;
   clientName?: string;
+  clientEmail?: string;
   eventDate?: string;
   createdAt: string; // Date ISO string
   updatedAt?: string; // Date ISO string
@@ -66,8 +69,11 @@ export interface AlbumFormData {
   category: string;
   expireAt: string;
   clientName?: string;
+  clientEmail?: string;
   eventDate?: string;
   allowDownload?: boolean;
+  /** Si true et clientEmail fourni, on envoie automatiquement le mail d'accès. */
+  sendEmailToClient?: boolean;
 }
 
 // Interface pour les statistiques admin

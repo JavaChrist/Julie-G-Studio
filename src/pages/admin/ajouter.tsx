@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { ArrowLeft, Plus, Shield } from 'lucide-react';
 import AlbumForm from '../../components/ui/AlbumForm';
 import SuccessModal from '../../components/ui/SuccessModal';
-import { createAlbum } from '../../services/albumCreationService';
+import { createAlbumDetailed, type EmailStatus, type PhotoFailure } from '../../services/albumCreationService';
 import { isUserAdmin } from '../../services/adminService';
 import { AlbumFormData } from '../../types';
 
@@ -21,8 +21,11 @@ const AjouterAlbum: React.FC = () => {
     stage: string;
     current?: number;
     total?: number;
+    percent?: number;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [warnings, setWarnings] = useState<string[]>([]);
+  const [emailStatus, setEmailStatus] = useState<EmailStatus>(null);
 
   const checkAuthAndRedirect = useCallback(async () => {
     setIsLoading(true);
@@ -56,31 +59,42 @@ const AjouterAlbum: React.FC = () => {
     setIsSubmitting(true);
     setUploadProgress({ stage: 'Préparation...' });
     setError(null);
+    setWarnings([]);
+    setEmailStatus(null);
+
+    const accumulatedFailures: PhotoFailure[] = [];
 
     try {
-      const albumCode = await createAlbum(
+      const result = await createAlbumDetailed(
         formData,
         imageFiles,
-        (stage, current, total) => {
-          setUploadProgress({ stage, current, total });
+        (stage, current, total, percent) => {
+          setUploadProgress({ stage, current, total, percent });
+        },
+        (failure) => {
+          accumulatedFailures.push(failure);
         }
       );
 
-      // Succès
       setCreatedAlbum({
-        code: albumCode,
+        code: result.albumCode,
         title: formData.title
       });
       setShowSuccessModal(true);
       setUploadProgress(null);
+      setEmailStatus(result.emailStatus);
+
+      if (result.failures.length > 0) {
+        setWarnings(result.failures.map(f => `${f.fileName}: ${f.reason}`));
+      }
 
     } catch (error) {
       console.error('Erreur lors de la création de l\'album:', error);
-
-      // Afficher l'erreur dans l'interface (plus d'alert ! 🎉)
       const errorMessage = error instanceof Error ? error.message : 'Une erreur est survenue';
       setError(`Erreur lors de la création de l'album: ${errorMessage}`);
-
+      if (accumulatedFailures.length > 0) {
+        setWarnings(accumulatedFailures.map(f => `${f.fileName}: ${f.reason}`));
+      }
       setUploadProgress(null);
     } finally {
       setIsSubmitting(false);
@@ -156,17 +170,24 @@ const AjouterAlbum: React.FC = () => {
                 <p className="text-primary-600 font-medium">
                   {uploadProgress.stage}
                 </p>
-                {uploadProgress.current && uploadProgress.total && (
+                {uploadProgress.current !== undefined && uploadProgress.total !== undefined && (
                   <div className="mt-2">
                     <div className="flex justify-between text-sm text-charcoal mb-1">
                       <span>Progression</span>
-                      <span>{uploadProgress.current}/{uploadProgress.total}</span>
+                      <span>
+                        {uploadProgress.current}/{uploadProgress.total}
+                        {typeof uploadProgress.percent === 'number' && ` • ${uploadProgress.percent}%`}
+                      </span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div
                         className="bg-primary-500 h-2 rounded-full transition-all duration-300"
                         style={{
-                          width: `${(uploadProgress.current / uploadProgress.total) * 100}%`
+                          width: `${
+                            typeof uploadProgress.percent === 'number'
+                              ? uploadProgress.percent
+                              : (uploadProgress.current / Math.max(uploadProgress.total, 1)) * 100
+                          }%`
                         }}
                       ></div>
                     </div>
@@ -186,7 +207,7 @@ const AjouterAlbum: React.FC = () => {
               </div>
               <div className="flex-1">
                 <h4 className="text-red-600 font-medium mb-1">Erreur de création</h4>
-                <p className="text-charcoal text-sm">{error}</p>
+                <p className="text-charcoal text-sm whitespace-pre-line">{error}</p>
                 <button
                   onClick={() => setError(null)}
                   className="mt-3 text-sm text-red-600 hover:text-red-500 underline"
@@ -198,11 +219,40 @@ const AjouterAlbum: React.FC = () => {
           </div>
         )}
 
+        {/* Avertissements (photos qui ont échoué mais l'album est quand même créé) */}
+        {warnings.length > 0 && (
+          <div className="mb-8 bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1">
+                <h4 className="text-yellow-700 font-medium mb-2">
+                  Photos non uploadées ({warnings.length})
+                </h4>
+                <ul className="text-charcoal text-sm space-y-1 list-disc list-inside">
+                  {warnings.map((msg, i) => (
+                    <li key={i}>{msg}</li>
+                  ))}
+                </ul>
+                <p className="text-xs text-taupe mt-3">
+                  Astuce : exportez d'abord vos photos en JPEG dans la galerie de votre appareil.
+                  Évitez de sélectionner directement depuis Lightroom Mobile / OneDrive (proxies cloud).
+                </p>
+              </div>
+              <button
+                onClick={() => setWarnings([])}
+                className="text-xs text-yellow-700 hover:text-yellow-800 underline shrink-0"
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Formulaire */}
         <div className="bg-cream-light rounded-xl p-8 shadow-lg border border-gray-200">
           <AlbumForm
             onSubmit={handleFormSubmit}
             isSubmitting={isSubmitting}
+            uploadProgress={uploadProgress}
           />
         </div>
 
@@ -251,6 +301,7 @@ const AjouterAlbum: React.FC = () => {
           onClose={handleSuccessModalClose}
           albumCode={createdAlbum.code}
           albumTitle={createdAlbum.title}
+          emailStatus={emailStatus}
         />
       )}
     </div>

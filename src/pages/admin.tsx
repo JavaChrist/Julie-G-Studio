@@ -5,6 +5,7 @@ import { getAllAlbums, extendAlbum, deleteAlbum, disableAlbum, getAdminStats, is
 import { Album, AdminStats } from '../types';
 import AdminAlbumCard from '../components/ui/AdminAlbumCard';
 import Modal from '../components/ui/Modal';
+import SuccessModal from '../components/ui/SuccessModal';
 import { useAuth } from '../hooks/useAuth';
 
 const AdminDashboard: React.FC = () => {
@@ -26,6 +27,7 @@ const AdminDashboard: React.FC = () => {
   const [extendTarget, setExtendTarget] = useState<Album | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Album | null>(null);
   const [disableTarget, setDisableTarget] = useState<Album | null>(null);
+  const [codeTarget, setCodeTarget] = useState<Album | null>(null);
   const [isWorking, setIsWorking] = useState(false);
 
   const loadDashboardData = useCallback(async () => {
@@ -323,6 +325,7 @@ const AdminDashboard: React.FC = () => {
                   onOpenDelete={(a) => setDeleteTarget(a)}
                   onOpenDisable={(a) => setDisableTarget(a)}
                   onOpenEdit={(a) => handleOpenEdit(a.id)}
+                  onShowCode={(a) => setCodeTarget(a)}
                 />
               ))}
             </div>
@@ -407,6 +410,17 @@ const AdminDashboard: React.FC = () => {
           </div>
         )}
       </Modal>
+
+      {/* Modal Code d'accès (consultation) */}
+      {codeTarget && (
+        <SuccessModal
+          isOpen={!!codeTarget}
+          onClose={() => setCodeTarget(null)}
+          albumCode={codeTarget.id}
+          albumTitle={codeTarget.title}
+          mode="view"
+        />
+      )}
 
       {/* Modal Désactiver/Activer */}
       <Modal

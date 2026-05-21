@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Clock, Trash2, RefreshCw, Image as ImageIcon, AlertTriangle, Power, Edit } from 'lucide-react';
+import { Calendar, Clock, Trash2, RefreshCw, Image as ImageIcon, AlertTriangle, Power, Edit, Key } from 'lucide-react';
 import { Album } from '../../types';
 
 interface AdminAlbumCardProps {
@@ -8,9 +8,10 @@ interface AdminAlbumCardProps {
   onOpenDelete: (album: Album) => void;
   onOpenDisable?: (album: Album) => void;
   onOpenEdit?: (album: Album) => void;
+  onShowCode?: (album: Album) => void;
 }
 
-const AdminAlbumCard: React.FC<AdminAlbumCardProps> = ({ album, onOpenExtend, onOpenDelete, onOpenDisable, onOpenEdit }) => {
+const AdminAlbumCard: React.FC<AdminAlbumCardProps> = ({ album, onOpenExtend, onOpenDelete, onOpenDisable, onOpenEdit, onShowCode }) => {
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
@@ -54,7 +55,7 @@ const AdminAlbumCard: React.FC<AdminAlbumCardProps> = ({ album, onOpenExtend, on
 
   return (
     <>
-      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-gray-600 transition-colors duration-300">
+      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-gray-600 transition-colors duration-300 flex flex-col h-full">
         {/* Header avec titre et statut */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
@@ -70,9 +71,20 @@ const AdminAlbumCard: React.FC<AdminAlbumCardProps> = ({ album, onOpenExtend, on
               <span className="text-gray-300">
                 📂 {album.category || 'Non classé'}
               </span>
-              <span className="text-gray-300">
-                🔑 {album.id}
-              </span>
+              {onShowCode ? (
+                <button
+                  type="button"
+                  onClick={() => onShowCode(album)}
+                  className="inline-flex items-center text-gray-300 hover:text-white underline decoration-dotted underline-offset-2 transition-colors"
+                  title="Voir le code d'accès et les instructions client"
+                >
+                  🔑 {album.id}
+                </button>
+              ) : (
+                <span className="text-gray-300">
+                  🔑 {album.id}
+                </span>
+              )}
             </div>
           </div>
 
@@ -127,53 +139,64 @@ const AdminAlbumCard: React.FC<AdminAlbumCardProps> = ({ album, onOpenExtend, on
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="flex flex-col sm:flex-row gap-2">
-          {/* Bouton Prolonger */}
-          <button
-            onClick={handleExtend}
-            className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-300 font-medium text-sm"
-          >
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Prolonger
-          </button>
-
-          {/* Bouton Désactiver/Activer */}
-          {onOpenDisable && (
+        {/* Bloc actions + avertissements collé au bas de la carte */}
+        <div className="mt-auto flex flex-col gap-2">
+          {/* Bouton Code d'accès (large, en haut) */}
+          {onShowCode && (
             <button
-              onClick={() => onOpenDisable(album)}
-              className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-colors duration-300 font-medium text-sm"
+              onClick={() => onShowCode(album)}
+              className="w-full inline-flex items-center justify-center px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors duration-300 font-medium text-sm"
             >
-              <Power className="w-4 h-4 mr-2" />
-              {album.active ? 'Désactiver' : 'Activer'}
+              <Key className="w-4 h-4 mr-2" />
+              Code d'accès & instructions
             </button>
           )}
 
-          {/* Bouton Supprimer */}
-          <button
-            onClick={() => onOpenDelete(album)}
-            className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-300 font-medium text-sm"
-          >
-            <Trash2 className="w-4 h-4 mr-2" />
-            Supprimer
-          </button>
+          <div className="flex flex-col sm:flex-row gap-2">
+            {/* Bouton Prolonger */}
+            <button
+              onClick={handleExtend}
+              className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-300 font-medium text-sm"
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Prolonger
+            </button>
 
+            {/* Bouton Désactiver/Activer */}
+            {onOpenDisable && (
+              <button
+                onClick={() => onOpenDisable(album)}
+                className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-colors duration-300 font-medium text-sm"
+              >
+                <Power className="w-4 h-4 mr-2" />
+                {album.active ? 'Désactiver' : 'Activer'}
+              </button>
+            )}
 
+            {/* Bouton Supprimer */}
+            <button
+              onClick={() => onOpenDelete(album)}
+              className="flex-1 inline-flex items-center justify-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-300 font-medium text-sm"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Supprimer
+            </button>
+          </div>
+
+          {/* Avertissements (rendus dans le même bloc bas pour rester alignés) */}
+          {!album.active && (
+            <div className="mt-2 flex items-center space-x-2 text-gray-400 text-sm bg-gray-500/10 border border-gray-500/20 rounded-lg p-3">
+              <Power className="w-4 h-4 flex-shrink-0" />
+              <span>Cet album est désactivé et n'est plus accessible aux clients</span>
+            </div>
+          )}
+          {isExpired && album.active && (
+            <div className="mt-2 flex items-center space-x-2 text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-lg p-3">
+              <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+              <span>Cet album a expiré et n'est plus accessible aux clients</span>
+            </div>
+          )}
         </div>
-
-        {/* Avertissements */}
-        {!album.active && (
-          <div className="mt-4 flex items-center space-x-2 text-gray-400 text-sm bg-gray-500/10 border border-gray-500/20 rounded-lg p-3">
-            <Power className="w-4 h-4 flex-shrink-0" />
-            <span>Cet album est désactivé et n'est plus accessible aux clients</span>
-          </div>
-        )}
-        {isExpired && album.active && (
-          <div className="mt-4 flex items-center space-x-2 text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-lg p-3">
-            <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-            <span>Cet album a expiré et n'est plus accessible aux clients</span>
-          </div>
-        )}
       </div>
 
       {/* Modales gérées par le parent */}

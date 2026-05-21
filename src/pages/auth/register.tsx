@@ -81,6 +81,8 @@ const RegisterPage: React.FC = () => {
               <Input
                 label="Nom d'affichage"
                 type="text"
+                name="name"
+                autoComplete="name"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="Votre nom"
@@ -89,6 +91,8 @@ const RegisterPage: React.FC = () => {
               <Input
                 label="Adresse email"
                 type="email"
+                name="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -98,19 +102,25 @@ const RegisterPage: React.FC = () => {
               <Input
                 label="Mot de passe"
                 type="password"
+                name="new-password"
+                autoComplete="new-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
+                togglePassword
               />
 
               <Input
                 label="Confirmer le mot de passe"
                 type="password"
+                name="confirm-password"
+                autoComplete="new-password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 placeholder="••••••••"
+                togglePassword
               />
             </div>
 

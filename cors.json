@@ -1,0 +1,22 @@
+[
+  {
+    "origin": [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "https://julie-g-studio-e7173.web.app",
+      "https://julie-g-studio-e7173.firebaseapp.com",
+      "https://jg-photographie.fr",
+      "https://www.jg-photographie.fr"
+    ],
+    "method": ["GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"],
+    "maxAgeSeconds": 3600,
+    "responseHeader": [
+      "Content-Type",
+      "Authorization",
+      "Content-Length",
+      "User-Agent",
+      "x-goog-resumable",
+      "X-Goog-Resumable"
+    ]
+  }
+]

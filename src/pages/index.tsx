@@ -34,6 +34,7 @@ export default function Home() {
             src="/DSC_0813.jpg"
             alt="Image de Soline fille de la photographe"
             fill
+            sizes="100vw"
             className="object-cover"
             priority
           />
@@ -114,26 +115,31 @@ export default function Home() {
               {/* Réseaux sociaux */}
               <div className="flex space-x-4">
                 <a
-                  href="#"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors duration-300"
-                  aria-label="Instagram"
+                  href="https://www.instagram.com/j_g.photographie"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary-500 hover:scale-110 transition-all duration-300"
+                  aria-label="Instagram - @j_g.photographie"
+                  title="Suivez Julie sur Instagram"
                 >
                   <Instagram className="w-5 h-5" />
                 </a>
-                <a
-                  href="#"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors duration-300"
-                  aria-label="Facebook"
+                <span
+                  className="w-10 h-10 bg-gray-800/50 rounded-full flex items-center justify-center cursor-not-allowed opacity-50"
+                  aria-label="Facebook (bientôt disponible)"
+                  aria-disabled="true"
+                  title="Bientôt disponible"
                 >
                   <Facebook className="w-5 h-5" />
-                </a>
-                <a
-                  href="#"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors duration-300"
-                  aria-label="LinkedIn"
+                </span>
+                <span
+                  className="w-10 h-10 bg-gray-800/50 rounded-full flex items-center justify-center cursor-not-allowed opacity-50"
+                  aria-label="LinkedIn (bientôt disponible)"
+                  aria-disabled="true"
+                  title="Bientôt disponible"
                 >
                   <Linkedin className="w-5 h-5" />
-                </a>
+                </span>
               </div>
             </div>
 

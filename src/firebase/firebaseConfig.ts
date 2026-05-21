@@ -26,20 +26,18 @@ if (missingVars.length > 0) {
   console.log('etc...');
 }
 
-// Normalisation du Storage Bucket: Firebase attend <project-id>.appspot.com
-let normalizedStorageBucket = requiredEnvVars.storageBucket || '';
-if (normalizedStorageBucket.endsWith('.firebasestorage.app')) {
-  const projectId = requiredEnvVars.projectId || normalizedStorageBucket.split('.')[0];
-  normalizedStorageBucket = `${projectId}.appspot.com`;
-}
-console.log('📦 Storage Bucket configuré:', normalizedStorageBucket || requiredEnvVars.storageBucket);
+// On utilise le storageBucket exactement tel que défini dans .env.local.
+// Pour les projets Firebase créés après avril 2024, le bucket par défaut est
+// <project-id>.firebasestorage.app. Pour les projets plus anciens, c'est
+// <project-id>.appspot.com. Aucune normalisation: la valeur de la console
+// Firebase est la source de vérité.
+console.log('📦 Storage Bucket configuré:', requiredEnvVars.storageBucket);
 
-// Configuration Firebase avec valeurs par défaut pour éviter les erreurs
 const firebaseConfig = {
   apiKey: requiredEnvVars.apiKey || "demo-api-key",
   authDomain: requiredEnvVars.authDomain || "demo-project.firebaseapp.com",
   projectId: requiredEnvVars.projectId || "demo-project",
-  storageBucket: normalizedStorageBucket || "demo-project.appspot.com",
+  storageBucket: requiredEnvVars.storageBucket || "demo-project.firebasestorage.app",
   messagingSenderId: requiredEnvVars.messagingSenderId || "123456789",
   appId: requiredEnvVars.appId || "1:123456789:web:demo"
 };
