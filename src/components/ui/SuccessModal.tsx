@@ -28,6 +28,81 @@ interface SuccessModalProps {
   emailStatus?: SuccessModalEmailStatus;
 }
 
+/**
+ * Badge interne affichant le statut d'envoi du mail.
+ * On utilise un switch sur le discriminant `sent` (true/false) pour que
+ * TypeScript narrow correctement le type dans chaque branche en mode strict.
+ */
+type EmailStatusSent = { sent: true; recipient?: string };
+type EmailStatusFailed = { sent: false; reason: string; recipient?: string };
+type DefinedEmailStatus = EmailStatusSent | EmailStatusFailed;
+
+const SentBadge: React.FC<{ status: EmailStatusSent }> = ({ status }) => (
+  <div className="w-full rounded-lg p-4 mb-6 border text-left bg-green-500/10 border-green-500/20">
+    <div className="flex items-start gap-3">
+      <Mail className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-green-400 mb-1">
+          Email envoyé au client
+        </p>
+        <p className="text-xs text-gray-300">
+          Le code d'accès, le lien et les instructions d'installation iPhone/Android
+          ont été envoyés{status.recipient ? ` à ${status.recipient}` : ''}.
+        </p>
+      </div>
+    </div>
+  </div>
+);
+
+const SkippedBadge: React.FC = () => (
+  <div className="w-full rounded-lg p-4 mb-6 border text-left bg-gray-500/10 border-gray-500/20">
+    <div className="flex items-start gap-3">
+      <MailX className="w-5 h-5 text-yellow-400 mt-0.5 shrink-0" />
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-gray-300 mb-1">
+          Email non envoyé (option désactivée)
+        </p>
+        <p className="text-xs text-gray-400">
+          Vous avez décoché l'envoi automatique. Vous pourrez transmettre le code
+          manuellement.
+        </p>
+      </div>
+    </div>
+  </div>
+);
+
+const FailedBadge: React.FC<{ reason: string }> = ({ reason }) => (
+  <div className="w-full rounded-lg p-4 mb-6 border text-left bg-yellow-500/10 border-yellow-500/30">
+    <div className="flex items-start gap-3">
+      <MailX className="w-5 h-5 text-yellow-400 mt-0.5 shrink-0" />
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-yellow-400 mb-1">
+          Échec de l'envoi du mail
+        </p>
+        <p className="text-xs text-gray-300 break-words">
+          L'album a bien été créé, mais l'envoi automatique du mail a échoué :
+          <span className="block mt-1 font-mono text-yellow-300">
+            {reason}
+          </span>
+        </p>
+        <p className="text-xs text-gray-400 mt-2">
+          Vous pouvez transmettre le code manuellement au client.
+        </p>
+      </div>
+    </div>
+  </div>
+);
+
+const EmailStatusBadge: React.FC<{ status: DefinedEmailStatus }> = ({ status }) => {
+  if (status.sent === true) {
+    return <SentBadge status={status} />;
+  }
+  if (status.reason === 'skipped') {
+    return <SkippedBadge />;
+  }
+  return <FailedBadge reason={status.reason} />;
+};
+
 const SuccessModal: React.FC<SuccessModalProps> = ({
   isOpen,
   onClose,
@@ -156,60 +231,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 
               {/* Statut d'envoi du mail (uniquement en mode 'created' avec un statut connu) */}
               {mode === 'created' && emailStatus && (
-                <div
-                  className={`w-full rounded-lg p-4 mb-6 border text-left ${emailStatus.sent
-                    ? 'bg-green-500/10 border-green-500/20'
-                    : emailStatus.reason === 'skipped'
-                      ? 'bg-gray-500/10 border-gray-500/20'
-                      : 'bg-yellow-500/10 border-yellow-500/30'
-                    }`}
-                >
-                  <div className="flex items-start gap-3">
-                    {emailStatus.sent ? (
-                      <Mail className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />
-                    ) : (
-                      <MailX className="w-5 h-5 text-yellow-400 mt-0.5 shrink-0" />
-                    )}
-                    <div className="flex-1 min-w-0">
-                      {emailStatus.sent ? (
-                        <>
-                          <p className="text-sm font-medium text-green-400 mb-1">
-                            Email envoyé au client
-                          </p>
-                          <p className="text-xs text-gray-300">
-                            Le code d'accès, le lien et les instructions d'installation iPhone/Android
-                            ont été envoyés{emailStatus.recipient ? ` à ${emailStatus.recipient}` : ''}.
-                          </p>
-                        </>
-                      ) : emailStatus.reason === 'skipped' ? (
-                        <>
-                          <p className="text-sm font-medium text-gray-300 mb-1">
-                            Email non envoyé (option désactivée)
-                          </p>
-                          <p className="text-xs text-gray-400">
-                            Vous avez décoché l'envoi automatique. Vous pourrez transmettre le code
-                            manuellement.
-                          </p>
-                        </>
-                      ) : (
-                        <>
-                          <p className="text-sm font-medium text-yellow-400 mb-1">
-                            Échec de l'envoi du mail
-                          </p>
-                          <p className="text-xs text-gray-300 break-words">
-                            L'album a bien été créé, mais l'envoi automatique du mail a échoué :
-                            <span className="block mt-1 font-mono text-yellow-300">
-                              {emailStatus.reason}
-                            </span>
-                          </p>
-                          <p className="text-xs text-gray-400 mt-2">
-                            Vous pouvez transmettre le code manuellement au client.
-                          </p>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                <EmailStatusBadge status={emailStatus} />
               )}
 
               {/* Actions */}

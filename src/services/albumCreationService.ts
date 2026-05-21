@@ -128,7 +128,15 @@ export const validateImageFiles = (files: File[]): string[] => {
  * c'est un placeholder cloud (OneDrive online-only, Lightroom Smart Preview,
  * Google Drive virtuel, etc.).
  */
-const probeFileReadable = async (file: File): Promise<{ ok: true } | { ok: false; reason: string }> => {
+type ProbeReadResult =
+  | { ok: true; bytes: number }
+  | { ok: false; reason: string };
+
+type ProbeFileResult =
+  | { ok: true }
+  | { ok: false; reason: string };
+
+const probeFileReadable = async (file: File): Promise<ProbeFileResult> => {
   if (file.size === 0) {
     return { ok: false, reason: 'fichier vide (probablement un placeholder cloud)' };
   }
@@ -136,15 +144,15 @@ const probeFileReadable = async (file: File): Promise<{ ok: true } | { ok: false
   const chunkSize = Math.min(64 * 1024, file.size); // 64 KB max
   const chunk = file.slice(0, chunkSize);
 
-  const readPromise = chunk.arrayBuffer().then(
-    (buf) => ({ ok: true as const, bytes: buf.byteLength }),
-    (err) => ({
-      ok: false as const,
+  const readPromise: Promise<ProbeReadResult> = chunk.arrayBuffer().then(
+    (buf): ProbeReadResult => ({ ok: true, bytes: buf.byteLength }),
+    (err): ProbeReadResult => ({
+      ok: false,
       reason: `lecture impossible: ${err instanceof Error ? err.message : 'erreur inconnue'}`,
     })
   );
 
-  const timeoutPromise = new Promise<{ ok: false; reason: string }>((resolve) => {
+  const timeoutPromise: Promise<ProbeReadResult> = new Promise((resolve) => {
     setTimeout(() => {
       resolve({
         ok: false,
@@ -153,9 +161,11 @@ const probeFileReadable = async (file: File): Promise<{ ok: true } | { ok: false
     }, PROBE_READ_TIMEOUT_MS);
   });
 
-  const result = await Promise.race([readPromise, timeoutPromise]);
-  if (!result.ok) return { ok: false, reason: result.reason };
-  if ('bytes' in result && result.bytes === 0) {
+  const result: ProbeReadResult = await Promise.race([readPromise, timeoutPromise]);
+  if (result.ok === false) {
+    return { ok: false, reason: result.reason };
+  }
+  if (result.bytes === 0) {
     return { ok: false, reason: 'aucune donnée lue (placeholder cloud probable)' };
   }
   return { ok: true };
@@ -228,7 +238,7 @@ export const uploadImage = async (
 
   // Étape 1: sonde de lecture
   const probe = await probeFileReadable(file);
-  if (!probe.ok) {
+  if (probe.ok === false) {
     throw new Error(probe.reason);
   }
 
@@ -394,7 +404,6 @@ export const uploadImages = async (
 export type EmailStatus =
   | { sent: true }
   | { sent: false; reason: string }
-  | { sent: false; reason: 'skipped' }
   | null;
 
 export interface CreateAlbumResult {
