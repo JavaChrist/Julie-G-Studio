@@ -56,14 +56,27 @@ const ErrorModal: React.FC<ErrorModalProps> = ({ isOpen, onClose, message }) => 
                   💬 Contactez Julie Grohens Photographe d'émotions
                 </h5>
                 <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                  <div className="flex items-center space-x-2">
-                    <Mail className="w-4 h-4 text-gray-400" />
-                    <span>julie-g.studio@gmail.com</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Phone className="w-4 h-4 text-gray-400" />
+                  <a
+                    href="mailto:contact@jg-photographie.fr"
+                    className="flex items-center space-x-2 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    <Mail className="w-4 h-4 text-gray-400 shrink-0" />
+                    <span className="break-all">contact@jg-photographie.fr</span>
+                  </a>
+                  <a
+                    href="mailto:jgrohens.photographie@gmail.com"
+                    className="flex items-center space-x-2 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    <Mail className="w-4 h-4 text-gray-400 shrink-0" />
+                    <span className="break-all">jgrohens.photographie@gmail.com</span>
+                  </a>
+                  <a
+                    href="tel:+33668006454"
+                    className="flex items-center space-x-2 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    <Phone className="w-4 h-4 text-gray-400 shrink-0" />
                     <span>06 68 00 64 54</span>
-                  </div>
+                  </a>
                 </div>
               </div>
 

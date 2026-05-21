@@ -25,7 +25,8 @@ interface SendAlbumEmailBody {
 }
 
 const PHONE = '06 68 00 64 54';
-const CONTACT_EMAIL = 'contact@jg-photographie.fr';
+const CONTACT_EMAIL_PRO = 'contact@jg-photographie.fr';
+const CONTACT_EMAIL_PERSO = 'jgrohens.photographie@gmail.com';
 const WEBSITE = 'www.jg-photographie.fr';
 const INSTAGRAM_HANDLE = '@j_g.photographie';
 const INSTAGRAM_URL = 'https://www.instagram.com/j_g.photographie';
@@ -103,7 +104,8 @@ INFORMATIONS IMPORTANTES
 
 BESOIN D'AIDE ?
 Si vous rencontrez la moindre difficulté ou avez des questions, n'hésitez pas à me contacter :
-- Email : ${CONTACT_EMAIL}
+- Email pro : ${CONTACT_EMAIL_PRO}
+- Email perso : ${CONTACT_EMAIL_PERSO}
 - Téléphone : ${PHONE}
 - Site : ${WEBSITE}
 - Instagram : ${INSTAGRAM_HANDLE} (${INSTAGRAM_URL})
@@ -262,7 +264,8 @@ function buildHtml(data: SendAlbumEmailBody, accessUrl: string, expireFr: string
                 Si vous rencontrez la moindre difficulté ou avez des questions :
               </p>
               <p style="margin:0; font-size:14px; color:#4a4a4a; line-height:1.8;">
-                Email : <a href="mailto:${escapeHtml(CONTACT_EMAIL)}" style="color:#b08d5b;">${escapeHtml(CONTACT_EMAIL)}</a><br/>
+                Email pro : <a href="mailto:${escapeHtml(CONTACT_EMAIL_PRO)}" style="color:#b08d5b;">${escapeHtml(CONTACT_EMAIL_PRO)}</a><br/>
+                Email perso : <a href="mailto:${escapeHtml(CONTACT_EMAIL_PERSO)}" style="color:#b08d5b;">${escapeHtml(CONTACT_EMAIL_PERSO)}</a><br/>
                 Téléphone : <strong>${escapeHtml(PHONE)}</strong><br/>
                 Site : <a href="https://${escapeHtml(WEBSITE)}" style="color:#b08d5b;">${escapeHtml(WEBSITE)}</a><br/>
                 Instagram : <a href="${escapeHtml(INSTAGRAM_URL)}" style="color:#b08d5b;">${escapeHtml(INSTAGRAM_HANDLE)}</a>

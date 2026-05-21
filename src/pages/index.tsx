@@ -191,18 +191,31 @@ export default function Home() {
             {/* Contact info */}
             <div>
               <h3 className="text-lg font-semibold mb-4">Contact</h3>
-              <div className="space-y-2 text-gray-300">
+              <div className="space-y-2 text-gray-300 text-sm">
+                <a
+                  href="mailto:contact@jg-photographie.fr"
+                  className="flex items-center hover:text-white transition-colors"
+                >
+                  <Mail className="w-4 h-4 mr-2 shrink-0" />
+                  <span className="break-all">contact@jg-photographie.fr</span>
+                </a>
+                <a
+                  href="mailto:jgrohens.photographie@gmail.com"
+                  className="flex items-center hover:text-white transition-colors"
+                >
+                  <Mail className="w-4 h-4 mr-2 shrink-0" />
+                  <span className="break-all">jgrohens.photographie@gmail.com</span>
+                </a>
+                <a
+                  href="tel:+33668006454"
+                  className="flex items-center hover:text-white transition-colors"
+                >
+                  <Phone className="w-4 h-4 mr-2 shrink-0" />
+                  <span>06 68 00 64 54</span>
+                </a>
                 <p className="flex items-center">
-                  <Mail className="w-4 h-4 mr-2" />
-                  jgrohens.photographie@gmail.com
-                </p>
-                <p className="flex items-center">
-                  <Phone className="w-4 h-4 mr-2" />
-                  06 68 00 64 54
-                </p>
-                <p className="flex items-center">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  Normandie
+                  <MapPin className="w-4 h-4 mr-2 shrink-0" />
+                  <span>Normandie</span>
                 </p>
               </div>
             </div>

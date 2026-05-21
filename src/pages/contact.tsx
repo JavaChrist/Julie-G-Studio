@@ -57,7 +57,18 @@ const Contact: React.FC = () => {
               <Mail className="w-6 h-6 text-gray-600 dark:text-gray-300" />
             </div>
             <h3 className="text-lg font-semibold text-white mb-2">Email</h3>
-            <p className="text-gray-300">julie-g.studio@gmail.com</p>
+            <a
+              href="mailto:contact@jg-photographie.fr"
+              className="text-gray-300 hover:text-white transition-colors break-all block"
+            >
+              contact@jg-photographie.fr
+            </a>
+            <a
+              href="mailto:jgrohens.photographie@gmail.com"
+              className="text-gray-300 hover:text-white transition-colors break-all block mt-1 text-sm"
+            >
+              jgrohens.photographie@gmail.com
+            </a>
           </div>
 
           <div className="text-center p-6 bg-gray-800 rounded-lg border border-gray-700">
