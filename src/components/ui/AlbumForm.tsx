@@ -184,7 +184,7 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting, uploadPro
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="min-w-0 space-y-6">
       {/* Titre de l'album */}
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-charcoal mb-2">
@@ -290,17 +290,17 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting, uploadPro
         <label htmlFor="eventDate" className="block text-sm font-medium text-charcoal mb-2">
           Date de l'événement
         </label>
-        <div className="relative">
+        <div className="relative w-full min-w-0">
           <input
             type="date"
             id="eventDate"
             name="eventDate"
             value={formData.eventDate}
             onChange={handleInputChange}
-            className="w-full px-4 py-3 pl-12 bg-white border border-gray-300 focus:border-primary-500 rounded-lg text-charcoal focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-300"
+            className="block w-full min-w-0 max-w-full px-3 py-3 pl-11 bg-white border border-gray-300 focus:border-primary-500 rounded-lg text-charcoal focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-300"
             disabled={isSubmitting}
           />
-          <Calendar className="absolute left-4 top-3.5 w-5 h-5 text-taupe" />
+          <Calendar className="pointer-events-none absolute left-4 top-3.5 w-5 h-5 text-taupe" />
         </div>
       </div>
 
@@ -309,7 +309,7 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting, uploadPro
         <label htmlFor="expireAt" className="block text-sm font-medium text-charcoal mb-2">
           Date d'expiration *
         </label>
-        <div className="relative">
+        <div className="relative w-full min-w-0">
           <input
             type="date"
             id="expireAt"
@@ -317,12 +317,12 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting, uploadPro
             value={formData.expireAt}
             onChange={handleInputChange}
             min={new Date().toISOString().split('T')[0]}
-            className={`w-full px-4 py-3 pl-12 bg-white border rounded-lg text-charcoal focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-300 ${errors.expireAt ? 'border-red-500' : 'border-gray-300 focus:border-primary-500'
+            className={`block w-full min-w-0 max-w-full px-3 py-3 pl-11 bg-white border rounded-lg text-charcoal focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-300 ${errors.expireAt ? 'border-red-500' : 'border-gray-300 focus:border-primary-500'
               }`}
             disabled={isSubmitting}
             placeholder={getDefaultExpireDate()}
           />
-          <Calendar className="absolute left-4 top-3.5 w-5 h-5 text-taupe" />
+          <Calendar className="pointer-events-none absolute left-4 top-3.5 w-5 h-5 text-taupe" />
         </div>
         {errors.expireAt && (
           <p className="mt-1 text-sm text-red-600">{errors.expireAt}</p>

@@ -133,7 +133,7 @@ const AjouterAlbum: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-cream-main transition-colors duration-300 py-8 px-4">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto w-full min-w-0">
         {/* Bouton retour */}
         <div className="mb-6">
           <button
@@ -248,7 +248,7 @@ const AjouterAlbum: React.FC = () => {
         )}
 
         {/* Formulaire */}
-        <div className="bg-cream-light rounded-xl p-8 shadow-lg border border-gray-200">
+        <div className="bg-cream-light rounded-xl p-4 sm:p-8 shadow-lg border border-gray-200 min-w-0">
           <AlbumForm
             onSubmit={handleFormSubmit}
             isSubmitting={isSubmitting}
