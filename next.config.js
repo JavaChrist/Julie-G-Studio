@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
+const appVersion = process.env.VERCEL_GIT_COMMIT_SHA || 'dev';
+
 const nextConfig = {
   reactStrictMode: true,
+  env: {
+    // SHA du commit, figé dans la page au moment du build.
+    NEXT_PUBLIC_APP_VERSION: appVersion,
+  },
   images: {
     // Formats optimisés - WebP et AVIF (encore plus compact)
     formats: ['image/webp', 'image/avif'],

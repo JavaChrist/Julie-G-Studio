@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Upload, X, Calendar, Tag, Type, User, Image as ImageIcon, Mail } from 'lucide-react';
-import { partitionImageFiles } from '../../services/albumCreationService';
+import { captureLocalFiles, partitionImageFiles } from '../../services/albumCreationService';
 import { AlbumFormData } from '../../types';
 
 interface AlbumFormProps {
@@ -30,8 +30,18 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting, uploadPro
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [imageErrors, setImageErrors] = useState<string[]>([]);
+  const [preparingImages, setPreparingImages] = useState(false);
+  const [prepareProgress, setPrepareProgress] = useState<{ current: number; total: number } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const imagePreviewsRef = useRef<string[]>([]);
+  imagePreviewsRef.current = imagePreviews;
+
+  useEffect(() => {
+    return () => {
+      imagePreviewsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, []);
 
   const categories = [
     { value: 'mariage', label: 'Mariage' },
@@ -61,53 +71,59 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting, uploadPro
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target;
+    const files = Array.from(input.files || []);
 
-    if (files.length === 0) return;
+    if (files.length === 0 || preparingImages) return;
 
-    // Partitionner: les fichiers valides sont ajoutés, les invalides
-    // sont signalés mais ne bloquent pas la sélection.
     const { valid, invalid } = partitionImageFiles(files);
+    const formatInvalid = invalid.map(({ file, reason }) => `${file.name}: ${reason}`);
 
-    if (invalid.length > 0) {
-      setImageErrors(
-        invalid.map(({ file, reason }) => `${file.name}: ${reason}`)
-      );
-    } else {
-      setImageErrors([]);
+    // La copie démarre dans ce tour, tant que la galerie autorise encore la lecture.
+    const pendingCapture =
+      valid.length > 0
+        ? captureLocalFiles(valid, (current, total) => {
+            setPrepareProgress({ current, total });
+          })
+        : Promise.resolve({ ready: [] as File[], failed: [] as { fileName: string; reason: string }[] });
+
+    if (valid.length === 0) {
+      setImageErrors(formatInvalid);
+      input.value = '';
+      return;
     }
 
-    if (valid.length === 0) return;
+    setPreparingImages(true);
+    setPrepareProgress({ current: 0, total: valid.length });
 
-    setImageFiles(prev => [...prev, ...valid]);
+    try {
+      const { ready, failed } = await pendingCapture;
+      const problems = [
+        ...formatInvalid,
+        ...failed.map(({ fileName, reason }) => `${fileName}: ${reason}`),
+      ];
 
-    // Aperçus uniquement pour les fichiers valides
-    const newPreviews: string[] = [];
-    valid.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        newPreviews.push(ev.target?.result as string);
-        if (newPreviews.length === valid.length) {
-          setImagePreviews(prev => [...prev, ...newPreviews]);
-        }
-      };
-      reader.onerror = () => {
-        setImageErrors(prev => [
-          ...prev,
-          `${file.name}: aperçu impossible (fichier illisible — probablement un proxy cloud)`,
-        ]);
-      };
-      reader.readAsDataURL(file);
-    });
+      if (ready.length > 0) {
+        const previews = ready.map((file) => URL.createObjectURL(file));
+        setImageFiles((prev) => [...prev, ...ready]);
+        setImagePreviews((prev) => [...prev, ...previews]);
+        setErrors((prev) => ({ ...prev, images: '' }));
+      }
+
+      setImageErrors(problems);
+    } finally {
+      setPreparingImages(false);
+      setPrepareProgress(null);
+      input.value = '';
+    }
   };
 
   const removeImage = (index: number) => {
-    const newFiles = imageFiles.filter((_, i) => i !== index);
-    const newPreviews = imagePreviews.filter((_, i) => i !== index);
-
-    setImageFiles(newFiles);
-    setImagePreviews(newPreviews);
+    const url = imagePreviews[index];
+    if (url) URL.revokeObjectURL(url);
+    setImageFiles((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const validateForm = (): boolean => {
@@ -150,7 +166,7 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting, uploadPro
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm()) {
+    if (preparingImages || !validateForm()) {
       return;
     }
 
@@ -369,19 +385,23 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting, uploadPro
 
         {/* Zone de drop */}
         <div
-          onClick={() => fileInputRef.current?.click()}
-          className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${errors.images ? 'border-red-500 bg-red-500/5' : 'border-gray-300 hover:border-primary-500 bg-gray-50'
+          onClick={() => {
+            if (!preparingImages && !isSubmitting) fileInputRef.current?.click();
+          }}
+          className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+            preparingImages || isSubmitting ? 'cursor-default' : 'cursor-pointer'
+          } ${errors.images ? 'border-red-500 bg-red-500/5' : 'border-gray-300 hover:border-primary-500 bg-gray-50'
             }`}
         >
           <Upload className="w-12 h-12 text-taupe mx-auto mb-4" />
           <p className="text-charcoal font-medium mb-2">
-            Cliquez pour sélectionner des images
+            {preparingImages ? 'Copie des photos en cours…' : 'Cliquez pour sélectionner des images'}
           </p>
           <p className="text-taupe text-sm">
             JPG, PNG, WebP • Max 50 MB par image • Max 200 images
           </p>
           <p className="text-taupe text-xs mt-2">
-            Astuce : exportez d'abord vos photos en JPEG dans la galerie de votre appareil. Évitez de sélectionner directement depuis Lightroom Mobile / OneDrive (proxies cloud).
+            Les photos sont copiées dès la sélection, pour rester disponibles au moment de créer l'album. Évitez Lightroom Mobile, Google Photos en ligne et OneDrive.
           </p>
         </div>
 
@@ -392,8 +412,30 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting, uploadPro
           accept="image/jpeg,image/png,image/webp"
           onChange={handleImageUpload}
           className="hidden"
-          disabled={isSubmitting}
+          disabled={isSubmitting || preparingImages}
         />
+
+        {preparingImages && prepareProgress && (
+          <div className="mt-3 bg-primary-500/10 border border-primary-500/20 rounded-lg p-3">
+            <div className="flex justify-between text-sm text-charcoal mb-2">
+              <span>Copie des photos sur cet appareil</span>
+              <span className="shrink-0 font-medium">
+                {prepareProgress.current}/{prepareProgress.total}
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+              <div
+                className="bg-primary-500 h-2 rounded-full transition-all duration-300"
+                style={{
+                  width: `${(prepareProgress.current / Math.max(prepareProgress.total, 1)) * 100}%`,
+                }}
+              />
+            </div>
+            <p className="mt-2 text-xs text-taupe">
+              Restez sur cette page le temps de la copie.
+            </p>
+          </div>
+        )}
 
         {errors.images && (
           <p className="mt-1 text-sm text-red-600">{errors.images}</p>
@@ -433,8 +475,8 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting, uploadPro
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="text-primary-600 hover:text-primary-500 text-sm"
-                disabled={isSubmitting}
+                className="text-primary-600 hover:text-primary-500 text-sm disabled:opacity-50"
+                disabled={isSubmitting || preparingImages}
               >
                 Ajouter plus
               </button>
@@ -466,10 +508,15 @@ const AlbumForm: React.FC<AlbumFormProps> = ({ onSubmit, isSubmitting, uploadPro
       {/* Bouton de soumission */}
       <button
         type="submit"
-        disabled={isSubmitting}
+        disabled={isSubmitting || preparingImages}
         className="w-full bg-primary-500 hover:bg-primary-600 disabled:bg-primary-400 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300 flex items-center justify-center space-x-2"
       >
-        {isSubmitting ? (
+        {preparingImages ? (
+          <>
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            <span>Copie des photos…</span>
+          </>
+        ) : isSubmitting ? (
           <>
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             <span>Création en cours...</span>

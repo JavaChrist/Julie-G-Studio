@@ -4,6 +4,7 @@ import { appendAlbumPhotos, deleteAlbumPhotos } from '../../../services/adminSer
 import { getAlbumByCode, type Album } from '../../../services/albumService';
 import { ArrowLeft, Trash2, Upload } from 'lucide-react';
 import {
+  captureLocalFiles,
   partitionImageFiles,
   uploadImages,
   type PhotoFailure,
@@ -19,7 +20,7 @@ const AdminEditAlbumPage: React.FC = () => {
     current: number;
     total: number;
     percent: number;
-    fileName?: string;
+    label?: string;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [warnings, setWarnings] = useState<string[]>([]);
@@ -66,33 +67,54 @@ const AdminEditAlbumPage: React.FC = () => {
   };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!album) return;
-    const rawFiles = e.target.files;
-    if (!rawFiles || rawFiles.length === 0) return;
+    const input = e.target;
+    const rawFiles = Array.from(input.files || []);
+    if (!album || rawFiles.length === 0) return;
+
+    const { valid, invalid } = partitionImageFiles(rawFiles);
+    const pendingCapture =
+      valid.length > 0
+        ? captureLocalFiles(valid, (current, total) => {
+            setUploadStatus({
+              current,
+              total,
+              percent: Math.round((current / Math.max(total, 1)) * 100),
+              label: `Copie des photos (${current}/${total})`,
+            });
+          })
+        : Promise.resolve({ ready: [] as File[], failed: [] as { fileName: string; reason: string }[] });
 
     setUploading(true);
     setError(null);
     setWarnings([]);
-    setUploadStatus({ current: 0, total: rawFiles.length, percent: 0 });
+    setUploadStatus({ current: 0, total: rawFiles.length, percent: 0, label: 'Préparation des photos…' });
 
     try {
-      const { valid, invalid } = partitionImageFiles(Array.from(rawFiles));
-
       const newWarnings: string[] = invalid.map(
         ({ file, reason }) => `${file.name}: ${reason}`
       );
 
-      if (valid.length === 0) {
+      const { ready, failed } = await pendingCapture;
+      failed.forEach(({ fileName, reason }) => {
+        newWarnings.push(`${fileName}: ${reason}`);
+      });
+
+      if (ready.length === 0) {
         setWarnings(newWarnings);
         setError('Aucun fichier valide à uploader.');
         return;
       }
 
-      setUploadStatus({ current: 0, total: valid.length, percent: 0 });
+      setUploadStatus({ current: 0, total: ready.length, percent: 0, label: 'Upload en cours…' });
 
-      const { successes, failures } = await uploadImages(valid, album.id, {
+      const { successes, failures } = await uploadImages(ready, album.id, {
         onProgress: (current, total, percent, fileName) => {
-          setUploadStatus({ current, total, percent, fileName });
+          setUploadStatus({
+            current,
+            total,
+            percent,
+            label: fileName ? `Upload de ${fileName}` : 'Upload en cours…',
+          });
         },
         onPhotoFailure: (failure: PhotoFailure) => {
           newWarnings.push(`${failure.fileName}: ${failure.reason}`);
@@ -129,7 +151,7 @@ const AdminEditAlbumPage: React.FC = () => {
     } finally {
       setUploading(false);
       setUploadStatus(null);
-      e.target.value = '';
+      input.value = '';
     }
   };
 
@@ -173,9 +195,7 @@ const AdminEditAlbumPage: React.FC = () => {
           <div className="mb-4 bg-primary-500/10 border border-primary-500/30 rounded-lg p-3">
             <div className="flex justify-between text-sm text-charcoal mb-2">
               <span className="truncate pr-2">
-                {uploadStatus.fileName
-                  ? `Upload de ${uploadStatus.fileName}`
-                  : 'Upload en cours...'}
+                {uploadStatus.label || 'Upload en cours...'}
               </span>
               <span className="shrink-0">
                 {uploadStatus.current}/{uploadStatus.total} • {uploadStatus.percent}%

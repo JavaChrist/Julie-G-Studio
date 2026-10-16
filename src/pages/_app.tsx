@@ -2,6 +2,7 @@ import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { AuthProvider } from '../hooks/useAuth'
+import { UpdateBanner } from '../components/system/UpdateBanner'
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -48,6 +49,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="apple-mobile-web-app-title" content="Julie Grohens" />
       </Head>
       <Component {...pageProps} />
+      <UpdateBanner initialVersion={process.env.NEXT_PUBLIC_APP_VERSION || 'dev'} />
     </AuthProvider>
   )
 }

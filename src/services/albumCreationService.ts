@@ -50,8 +50,12 @@ const UPLOAD_STALL_TIMEOUT_MS = 45_000;
 // Sécurité absolue: aucune photo ne devrait prendre plus de 5 minutes à uploader.
 const UPLOAD_TOTAL_TIMEOUT_MS = 5 * 60_000;
 
-// Délai pour la sonde de lecture initiale (test rapide de lisibilité).
-const PROBE_READ_TIMEOUT_MS = 8_000;
+// Si aucun octet n'arrive pendant ce délai, le fichier est inaccessible
+// (placeholder cloud, accès galerie déjà retiré, etc.).
+const SNAPSHOT_STALL_TIMEOUT_MS = 15_000;
+
+// Plafond absolu pour copier une photo en mémoire.
+const SNAPSHOT_TOTAL_TIMEOUT_MS = 3 * 60_000;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Validation et partitionnement des fichiers
@@ -119,56 +123,160 @@ export const validateImageFiles = (files: File[]): string[] => {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Sonde de lisibilité (détection rapide des placeholders / proxies)
+// Copie locale immédiate
+//
+// Sur Android (et parfois iOS), la galerie ne prête l'accès aux photos que
+// le temps de la sélection. L'aperçu, lu tout de suite, s'affiche. Plus tard,
+// au moment de créer l'album, file.slice().arrayBuffer() échoue avec
+// "The requested file could not be read, typically due to permission problems…".
+// On recopie donc les octets en mémoire dès le choix, via FileReader, la même
+// voie que les miniatures.
 // ─────────────────────────────────────────────────────────────────────────────
 
+const snapshottedFiles = new WeakSet<File>();
+
+export const describeReadError = (error: unknown): string => {
+  const name = error instanceof DOMException ? error.name : '';
+  const message = error instanceof Error ? error.message : '';
+  if (name === 'NotReadableError' || /could not be read|permission problems/i.test(message)) {
+    return "le téléphone a retiré l'accès à cette photo. Resélectionnez-la depuis la galerie de l'appareil, sans changer d'application.";
+  }
+  if (message) return message;
+  return 'lecture impossible';
+};
+
 /**
- * Tente de lire un petit chunk du fichier pour vérifier qu'il est réellement
- * accessible. Si la lecture prend trop de temps ou échoue, on considère que
- * c'est un placeholder cloud (OneDrive online-only, Lightroom Smart Preview,
- * Google Drive virtuel, etc.).
+ * Copie le fichier dans un File en mémoire. Les lectures suivantes
+ * (y compris celles de Firebase, qui découpent le fichier) ne repassent
+ * plus par la galerie.
+ * Inutile de rappeler cette fonction sur un fichier déjà copié.
  */
-type ProbeReadResult =
-  | { ok: true; bytes: number }
-  | { ok: false; reason: string };
-
-type ProbeFileResult =
-  | { ok: true }
-  | { ok: false; reason: string };
-
-const probeFileReadable = async (file: File): Promise<ProbeFileResult> => {
-  if (file.size === 0) {
-    return { ok: false, reason: 'fichier vide (probablement un placeholder cloud)' };
+export const snapshotLocalFile = (file: File): Promise<File> => {
+  if (snapshottedFiles.has(file)) {
+    return Promise.resolve(file);
   }
 
-  const chunkSize = Math.min(64 * 1024, file.size); // 64 KB max
-  const chunk = file.slice(0, chunkSize);
+  if (file.size === 0) {
+    return Promise.reject(new Error('fichier vide (probablement un placeholder cloud)'));
+  }
 
-  const readPromise: Promise<ProbeReadResult> = chunk.arrayBuffer().then(
-    (buf): ProbeReadResult => ({ ok: true, bytes: buf.byteLength }),
-    (err): ProbeReadResult => ({
-      ok: false,
-      reason: `lecture impossible: ${err instanceof Error ? err.message : 'erreur inconnue'}`,
-    })
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    let settled = false;
+    let lastProgressAt = Date.now();
+
+    const cleanup = () => {
+      clearInterval(stallTimer);
+      clearTimeout(totalTimer);
+    };
+
+    const fail = (error: unknown) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      try {
+        reader.abort();
+      } catch {
+        // déjà terminé
+      }
+      reject(error instanceof Error ? error : new Error('lecture impossible'));
+    };
+
+    const stallTimer = setInterval(() => {
+      if (Date.now() - lastProgressAt > SNAPSHOT_STALL_TIMEOUT_MS) {
+        fail(
+          new Error(
+            'lecture trop lente (la photo est probablement dans le cloud, pas sur le téléphone)'
+          )
+        );
+      }
+    }, 1_000);
+
+    const totalTimer = setTimeout(() => {
+      fail(new Error('lecture trop longue'));
+    }, SNAPSHOT_TOTAL_TIMEOUT_MS);
+
+    reader.onprogress = (event) => {
+      if (event.loaded > 0) {
+        lastProgressAt = Date.now();
+      }
+    };
+
+    reader.onload = () => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      const result = reader.result;
+      if (!(result instanceof ArrayBuffer) || result.byteLength === 0) {
+        reject(new Error('aucune donnée lue (photo indisponible sur le téléphone)'));
+        return;
+      }
+      const copy = new File([result], file.name, {
+        type: file.type || 'image/jpeg',
+        lastModified: file.lastModified,
+      });
+      snapshottedFiles.add(copy);
+      resolve(copy);
+    };
+
+    reader.onerror = () => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      reject(reader.error ?? new Error('lecture impossible'));
+    };
+
+    reader.readAsArrayBuffer(file);
+  });
+};
+
+export interface LocalCaptureResult {
+  ready: File[];
+  failed: { fileName: string; reason: string }[];
+}
+
+/**
+ * Démarre la copie de tous les fichiers dans le même tour que le choix
+ * utilisateur. À appeler tout de suite dans le onChange, avant tout await.
+ */
+export const captureLocalFiles = async (
+  files: File[],
+  onProgress?: (done: number, total: number) => void
+): Promise<LocalCaptureResult> => {
+  let done = 0;
+  const total = files.length;
+
+  const reads = files.map((file) =>
+    snapshotLocalFile(file).then(
+      (snapshot) => {
+        done += 1;
+        onProgress?.(done, total);
+        return snapshot;
+      },
+      (error: unknown) => {
+        done += 1;
+        onProgress?.(done, total);
+        throw error;
+      }
+    )
   );
 
-  const timeoutPromise: Promise<ProbeReadResult> = new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        ok: false,
-        reason: 'lecture trop lente (le fichier est probablement stocké dans le cloud, pas localement)',
-      });
-    }, PROBE_READ_TIMEOUT_MS);
+  const settled = await Promise.allSettled(reads);
+  const ready: File[] = [];
+  const failed: LocalCaptureResult['failed'] = [];
+
+  settled.forEach((result, index) => {
+    if (result.status === 'fulfilled') {
+      ready.push(result.value);
+      return;
+    }
+    failed.push({
+      fileName: files[index]?.name || `photo ${index + 1}`,
+      reason: describeReadError(result.reason),
+    });
   });
 
-  const result: ProbeReadResult = await Promise.race([readPromise, timeoutPromise]);
-  if (result.ok === false) {
-    return { ok: false, reason: result.reason };
-  }
-  if (result.bytes === 0) {
-    return { ok: false, reason: 'aucune donnée lue (placeholder cloud probable)' };
-  }
-  return { ok: true };
+  return { ready, failed };
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -221,7 +329,7 @@ export interface ResumableUploadOptions {
  * Upload une image vers Firebase Storage en utilisant uploadBytesResumable.
  * - Annule automatiquement si l'upload stagne (aucun progrès pendant N ms).
  * - Annule automatiquement si l'upload total dépasse une durée maximale.
- * - Détecte les fichiers placeholder/inaccessibles AVANT de tenter l'upload.
+ * - Envoie une copie mémoire du fichier, pour ne pas relire la galerie.
  */
 export const uploadImage = async (
   file: File,
@@ -236,23 +344,21 @@ export const uploadImage = async (
   const stallTimeoutMs = options.stallTimeoutMs ?? UPLOAD_STALL_TIMEOUT_MS;
   const totalTimeoutMs = options.totalTimeoutMs ?? UPLOAD_TOTAL_TIMEOUT_MS;
 
-  // Étape 1: sonde de lecture
-  const probe = await probeFileReadable(file);
-  if (probe.ok === false) {
-    throw new Error(probe.reason);
-  }
+  // Si la photo a déjà été copiée au moment du choix, ceci revient tout de suite.
+  // Sinon on lit via FileReader (la voie qui marche pour les miniatures), pas via slice().
+  const localFile = await snapshotLocalFile(file).catch((error: unknown) => {
+    throw new Error(describeReadError(error));
+  });
 
-  // Étape 2: préparation
-  const fileExtension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+  const fileExtension = localFile.name.split('.').pop()?.toLowerCase() || 'jpg';
   const fileName = `${index + 1}-${Date.now()}.${fileExtension}`;
   const imagePath = `albums/${albumCode}/${fileName}`;
   const imageRef = ref(storage, imagePath);
 
-  // Étape 3: upload avec watchdog
   return new Promise<string>((resolve, reject) => {
     let task: UploadTask;
     try {
-      task = uploadBytesResumable(imageRef, file, { contentType: file.type });
+      task = uploadBytesResumable(imageRef, localFile, { contentType: localFile.type });
     } catch (err) {
       reject(err);
       return;

@@ -14,7 +14,7 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { signIn, signOut, resetPassword } = useAuth();
+  const { signIn, signOut } = useAuth();
   const router = useRouter();
   const [showReset, setShowReset] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
@@ -59,10 +59,18 @@ const LoginPage: React.FC = () => {
     try {
       setResetLoading(true);
       setResetMsg(null);
-      await resetPassword(email);
-      setResetMsg("Email d'instructions envoyé. Vérifiez votre boîte de réception.");
+      const response = await fetch('/api/send-password-reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload?.error || "Erreur lors de l'envoi.");
+      }
+      setResetMsg("Si un compte existe pour cette adresse, l'email vient d'être envoyé. Vérifiez votre boîte de réception.");
     } catch (err: any) {
-      setResetMsg(err?.message || 'Erreur lors de lenvoi.');
+      setResetMsg(err?.message || "Erreur lors de l'envoi.");
     } finally {
       setResetLoading(false);
     }
@@ -140,8 +148,8 @@ const LoginPage: React.FC = () => {
       {/* Modal reset password */}
       <Modal isOpen={showReset} onClose={() => setShowReset(false)} title="Réinitialiser le mot de passe">
         <div className="space-y-4">
-          <p className="text-sm text-white">
-            Entrez votre adresse email. Vous recevrez un lien de réinitialisation si un compte existe.
+          <p className="text-sm text-charcoal dark:text-gray-200">
+            Entrez votre adresse email. Vous recevrez un lien pour choisir un nouveau mot de passe.
           </p>
           <Input
             label="Adresse email"
@@ -153,21 +161,23 @@ const LoginPage: React.FC = () => {
             placeholder="votre@email.com"
           />
           {resetMsg && (
-            <div className="text-sm {resetLoading ? 'text-white/90' : 'text-white'}">
+            <div className="text-sm text-charcoal dark:text-gray-100 bg-cream-light dark:bg-gray-700 border border-primary-200 rounded-lg px-3 py-2">
               {resetMsg}
             </div>
           )}
           <div className="flex gap-3">
             <button
+              type="button"
               onClick={() => setShowReset(false)}
-              className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg"
+              className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-charcoal rounded-lg"
               disabled={resetLoading}
             >
               Annuler
             </button>
             <button
+              type="button"
               onClick={handleSendReset}
-              className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+              className="flex-1 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg disabled:opacity-50"
               disabled={resetLoading}
             >
               {resetLoading ? 'Envoi...' : 'Envoyer le lien'}
